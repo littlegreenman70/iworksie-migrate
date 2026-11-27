@@ -1,8 +1,25 @@
 # iWorks.ie Migrate 1.0.0 review
 
-Independent review of `claude/migrate-1.0.0` after Part A setup on Cormac's iMac (Europe/Dublin). No plugin code was changed in this pass; this file is the only review deliverable.
+Independent review of `claude/migrate-1.0.0` after Part A setup on Cormac's iMac (Europe/Dublin). A later pass on the same branch applied triage fixes F1–F7, F14 and F15 (see Fixes applied below). F8–F13 remain deferred in `DECISIONS.md`.
 
-**Verdict: ready for a two-site test.** The claimed Media Library pull design holds in code and in the automated suite. Local lint, analyse, unit, integration, Plugin Check, Playwright admin smoke and GitHub CI are all green. There are no Critical findings. Fix the High item (hardlinks on the giver) and the Medium items before wordpress.org submission; none of them need to block a controlled two-site trial on Cormac's own sites.
+**Verdict: ready for a two-site test.** The claimed Media Library pull design holds in code and in the automated suite. Hardlinks, seq CAS, 2 GB / 32-bit notice, NFC detect-only, private URL notice, receiver key clearing and atomic replace are in. Local lint, analyse, unit, integration, Plugin Check, Playwright admin smoke and GitHub CI should be re-checked after that fix pass.
+
+---
+
+## Fixes applied
+
+| ID | Status | Notes |
+|----|--------|-------|
+| F1 | Fixed | `Paths::unsafe_read_reason` refuses `nlink > 1`; Walker skips as `hardlink`; `chunk` / `files` refuse. |
+| F2 | Fixed | `KeyStore::claim_seq` uses MySQL `GET_LOCK` + compare-and-swap. |
+| F3 | Fixed | `Paths::safe_filesize`; skip `too_large`; hello reports `php_int_size`; pre-flight recommended on 32-bit. |
+| F4 | Fixed | Detect-only via `Paths::is_nfc` + Walker `nfc` flag; pre-flight info; FAQ/README. No rewrite. |
+| F5 | Fixed | Pre-flight recommended when key REST URL is private/loopback/local; still uses `wp_remote_post`. |
+| F6 | Fixed | `PullJob::finish` deletes `iwiemg_receiver_key` after success. |
+| F7 | Fixed | Replace renames existing aside, then part into place, then deletes aside. |
+| F14 | Fixed | Unit/integration coverage for hardlinks, seq claim, NFC, private URL, custom `upload_path`, key clear. |
+| F15 | Fixed | README Local development notes Plugin Check on `build/iworksie-migrate`. |
+| F8–F13 | Deferred | Reasons in `DECISIONS.md`. |
 
 ---
 
@@ -39,7 +56,7 @@ Independent review of `claude/migrate-1.0.0` after Part A setup on Cormac's iMac
 | Disk-space check before writing | **holds** | After count, before copy phase (`PullJob.php:304-317`) with 50 MB margin. Mid-copy OOS fail at `:617-618`. |
 | Dead-weight skip (default) | **holds** | `Paths::dead_weight_reason`; Walker + count record skips; UI checkbox on. Plain zips without "backup" copied (DECISIONS). |
 | Scripts + server config blocked on **both** sides | **holds** | Giver: Walker + `blocked_reason` before chunk (`Api.php:223-224`). Receiver: `begin_file` (`PullJob.php:411-412`). Double-ext `x.php.jpg` and case variants unit-tested. |
-| Never follow symlinks | **holds** | Walker skips `is_link`; Api refuses `is_link`. **Hardlinks not covered** (see F1). |
+| Never follow symlinks | **holds** | Walker skips `is_link`; Api refuses `is_link`. Hardlinks refused via `nlink > 1` (F1 fixed). |
 | Expiring keys, shown once | **holds** | Lifetimes 1h/24h/7d (`KeyStore`); UI output hidden until create; `active()` null when expired. Not single-*use* (many requests until expiry), which matches DECISIONS ("single-use display"). |
 | CLI and browser share job state | **holds** | CLI `drive()` saves via core Jobs (`Command.php:135-146`); same `migrate_pull` id. |
 | Multisite refused | **holds** | `iworksie-migrate.php:105-109` notice, no boot. |
@@ -90,12 +107,12 @@ Independent review of `claude/migrate-1.0.0` after Part A setup on Cormac's iMac
 
 - Auth model is sound for a short-lived shared secret: canonical string includes protocol, route, time, seq and body hash; comparisons use `hash_equals`.
 - Read surface is limited to real files under uploads with extension and config denylists on both ends.
-- Main residual risks before .org: **hardlinks (F1)**, seq CAS (F2), intentional private-URL SSRF (F5), and secret-in-option on the receiver (F6).
+- Residual risks before .org: intentional private-URL contact when the admin pastes such a key (warned in pre-flight, F5), and deferred oracles/throttling (F8/F9).
 - A malicious giver still cannot plant `.php` / `.htaccess` on the receiver; it can supply large or tricky media (SVG/HTML) like any upload path. Replace mode is opt-in.
 
 ## Tests vs claims
 
-Integration `PullFlowTest` proves full copy + SHA-1, skip of php/htaccess/backup, keep vs replace, pause/resume mid-file, revoke, bad signature, replay, expiry, traversal/script chunk refusal, unsigned refusal, and small-file batching. Unit tests cover path rules, key crypto, walker paging/skips. Gaps are listed in F14.
+Integration `PullFlowTest` proves full copy + SHA-1, skip of php/htaccess/backup, keep vs replace, pause/resume mid-file, revoke, bad signature, replay, expiry, traversal/script chunk refusal, unsigned refusal, small-file batching, hardlink refusal, seq claim, custom upload_path, and receiver key clear after finish. Unit tests cover path rules, hardlinks, private URL detection, NFC detection, key crypto, walker paging/skips.
 
 ## Consistency with Health Check / core
 

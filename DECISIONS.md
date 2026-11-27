@@ -10,6 +10,13 @@ Choices made while building v1.0.0 overnight without Cormac's input (he asked fo
 | 2026-11-26 | Requests signed with HMAC-SHA256 over route, time, sequence and body hash; ±15 min clock window; strictly increasing sequence number per key | Secret never travels. Sequence number gives replay protection with one small option write instead of a nonce table (thousands of chunk requests would create thousands of transients). |
 | 2026-11-26 | Sequence numbers compared as digit strings | 32-bit PHP builds overflow on microsecond timestamps. |
 | 2026-11-26 | Never copy scripts (`.php*`, `.phtml`, `.phar`, `.cgi`, `.pl`, `.py`, `.sh`, `.asp*`, `.jsp`, `.shtml`, and PHP hidden in a middle segment like `x.php.jpg`) or server config (`.htaccess`, `.htpasswd`, `.user.ini`, `php.ini`, `web.config`); never follow symlinks. Enforced on **both** sides | Uploads should hold media; these files are how malware hops between sites and a compromised giver must not be able to plant them. Listed in the report so nothing disappears silently. Middle-segment check is PHP-only so `brochure.pl.pdf` is not blocked. |
+| 2026-11-27 | Also refuse hardlinks (`lstat` nlink > 1) on the giver when listing and reading | A hardlink under uploads can share an inode with a file outside uploads; realpath + is_inside alone would serve that file. Refusing every nlink > 1 is the simplest robust rule (F1). |
+| 2026-11-27 | Sequence claim uses MySQL `GET_LOCK` + compare-and-swap on `iwiemg_giver_seq` | Closes the non-atomic read/compare/`touch` race under concurrent signed requests (F2). |
+| 2026-11-27 | 32-bit PHP: pre-flight recommended warning; files whose size cannot be read safely are skipped as `too_large` | `(int)` offsets truncate above about 2 GB on 32-bit builds (F3). 64-bit PHP is documented for large libraries. |
+| 2026-11-27 | Unicode NFC/NFD: detect and document only; do not rewrite names | Cross-platform lookalikes stay a known limitation for v1 (F4). Pre-flight info when intl is present or missing. |
+| 2026-11-27 | Keep `wp_remote_post` (private URLs allowed); add a pre-flight recommended warning when the key host is private/loopback/local | LAN and local migrations must keep working (F5). |
+| 2026-11-27 | Delete `iwiemg_receiver_key` in `PullJob::finish` after a successful (non-failed, non-cancelled) run | Shortens the window where a receiver DB backup holds a live giver secret (F6). Resume still works until finish; re-run needs a new paste. |
+| 2026-11-27 | Replace: rename existing file aside, rename `.iwiemg-part` into place, then delete the aside copy | Avoids the delete-before-rename window that could lose both files on crash (F7). |
 | 2026-11-26 | Dead-weight skip (default on) is narrower than Health Check's: backup/cache/VCS folders, logs, SQL dumps, `.wpress`/`.bak`, archives with "backup" in the name. Plain `.zip` files are copied | Zips and PDFs in uploads are often real downloads. |
 | 2026-11-26 | Default **never overwrites** an existing different file ("Replace" checkbox, off). Identical = same size + mtime, always skipped; mtime is preserved on copy | Safe-by-default positioning; makes re-runs incremental. |
 | 2026-11-26 | Three phases: count (list + exact disk-space check before writing anything), copy, verify (SHA-1 via `manifest?hash=1`) | Fixes the #1 competitor failure (disk full at 99%) and adds the verify report none of them have. |
@@ -32,6 +39,17 @@ Choices made while building v1.0.0 overnight without Cormac's input (he asked fo
 
 - A job runner in `iwt-core.js` that accepts params, exposes a finish callback and handles transient errors/pause (what `assets/js/admin.js` does here).
 - `Transfer` module (key, signing, chunk client) once Backup or a v2 full-files Migrate needs it.
+
+## Deferred from review (F8–F13)
+
+| ID | Why deferred |
+|----|--------------|
+| F8 | Collapsing auth error oracles to one generic 401/403 helps probing resistance but makes support harder while the plugin is new; revisit after first public release. |
+| F9 | HMAC brute-force is already impractical; soft IP/key throttling is defence-in-depth for a later hardening pass. |
+| F10 | Size+mtime identical heuristic is intentional for incremental re-runs; optional hash-on-identical stays a later toggle once real FAT/mtime skew shows up. |
+| F11 | Listing copy already says "Media Library"; no product rename needed for v1. |
+| F12 | Promoting the job runner into tools-core is a core minor, not a Migrate patch. |
+| F13 | Pre-start file/size estimate is UX polish after the controlled two-site trial. |
 
 ## Before wordpress.org submission
 

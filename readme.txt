@@ -23,7 +23,7 @@ iWorks.ie Migrate copies the files in **wp-content/uploads** directly from one W
 * **Never overwrites by surprise.** Files already on the new site are kept unless you tick "Replace". Identical files are skipped, so running it again only fetches what changed.
 * **Verified.** When it finishes, every file is checked against the original (SHA-1) and you get a report you can copy or download.
 * **Skips dead weight.** Old backups, caches, logs and database dumps in uploads are left behind (you can include them if you want).
-* **Safe by design.** The old site only gives read access to its uploads folder, for as long as the key you create lasts (1 hour to 7 days). Script files and server config files (.php, .htaccess and similar) are never copied in either direction.
+* **Safe by design.** The old site only gives read access to its uploads folder, for as long as the key you create lasts (1 hour to 7 days). Script files, server config files (.php, .htaccess and similar), symbolic links and hard links are never copied in either direction.
 
 = How it works =
 
@@ -71,7 +71,19 @@ The key's secret is never sent. Each request carries a signature made with it, a
 
 = Which files are never copied? =
 
-Script files (.php, .phtml, .phar, .cgi, .pl, .py, .sh and similar) and server configuration files (.htaccess, .user.ini, php.ini, web.config). These do not belong in uploads and are a common way malware spreads between sites. They are listed in the report so you can review them. Plugins that rely on an .htaccess file in uploads (for example to protect downloads) normally recreate it themselves.
+Script files (.php, .phtml, .phar, .cgi, .pl, .py, .sh and similar), server configuration files (.htaccess, .user.ini, php.ini, web.config), symbolic links and hard links. These do not belong in uploads and are a common way malware spreads between sites. They are listed in the report so you can review them. Plugins that rely on an .htaccess file in uploads (for example to protect downloads) normally recreate it themselves.
+
+= Does the receiving site keep my key? =
+
+The pasted key (including its secret) is stored on the receiving site so you can resume or re-run. After a successful copy it is deleted automatically. You can also press "Use a different key" at any time, or uninstall the plugin.
+
+= Private or local addresses =
+
+Keys that point at localhost, .local hosts or private IP ranges are allowed so LAN and local development copies work. Pre-flight shows a warning when the key targets a private address. Only continue if you trust that key.
+
+= File names from macOS to Linux =
+
+File names are copied as raw bytes. macOS often stores Unicode names as NFD and Linux as NFC, so the same visible name can look like two different files. This version detects that limitation but does not rewrite names.
 
 = What happens if the connection drops? =
 
@@ -101,6 +113,11 @@ Yes. No paid version, no upsells, no data sent anywhere except between your own 
 
 = 1.0.0 =
 * Initial release: site-to-site copy of the uploads folder with pairing key, pre-flight checks on both sites, disk space check, resumable chunked transfer, SHA-1 verification report and WP-CLI commands.
+* Refuse hardlinks on the giving site (symlinks were already refused).
+* Atomic sequence-number claim to close a replay race under concurrent requests.
+* Pre-flight notices for private/local key URLs, 32-bit PHP / files over about 2 GB, and Unicode NFC/NFD file name forms (detect only, no rewrite).
+* Clear the pasted receiver key after a successful copy; replace existing files with an aside-then-rename so a crash cannot lose both copies.
+* Tests for hardlinks, sequence claim, custom upload_path, NFC detection and private URL detection.
 
 == Upgrade Notice ==
 
