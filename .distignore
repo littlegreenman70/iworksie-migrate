@@ -12,6 +12,7 @@ phpstan.neon.dist
 phpunit.xml.dist
 PROGRESS.md
 DECISIONS.md
+REVIEW.md
 README.md
 bin
 tests
