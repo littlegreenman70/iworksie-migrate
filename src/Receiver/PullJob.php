@@ -140,6 +140,7 @@ final class PullJob implements Job {
 				'missing'    => array(),
 			),
 			'skip_reasons' => array(),
+			'nfc_names'    => 0,
 			'net_failures' => 0,
 			'paused'       => false,
 			'last_error'   => '',
@@ -178,6 +179,13 @@ final class PullJob implements Job {
 			// The user pressed Resume.
 			$state['paused']       = false;
 			$state['net_failures'] = 0;
+		}
+		// Restore a Replace aside file left by a crash (dest missing, .iwiemg-old present).
+		if ( is_array( $state['cur'] ) && isset( $state['cur']['p'] ) ) {
+			$rel = Paths::normalize_relative( $state['cur']['p'] );
+			if ( null !== $rel ) {
+				$this->restore_aside( $this->base() . '/' . $rel );
+			}
 		}
 
 		$timeout = (int) max( 5, ceil( (float) $time_budget ) );
@@ -245,6 +253,7 @@ final class PullJob implements Job {
 			'c'            => isset( $state['c'] ) ? $state['c'] : array(),
 			'lists'        => isset( $state['lists'] ) ? $state['lists'] : array(),
 			'skip_reasons' => isset( $state['skip_reasons'] ) ? $state['skip_reasons'] : array(),
+			'nfc_names'    => isset( $state['nfc_names'] ) ? (int) $state['nfc_names'] : 0,
 			'failed'       => isset( $state['failed'] ) ? (string) $state['failed'] : '',
 			'failed_fix'   => isset( $state['failed_fix'] ) ? (string) $state['failed_fix'] : '',
 			'phase'        => isset( $state['phase'] ) ? (string) $state['phase'] : '',
@@ -278,14 +287,42 @@ final class PullJob implements Job {
 		}
 		$state['net_failures'] = 0;
 
-		$base = $this->base();
+		$base          = $this->base();
+		$too_large     = ! empty( $state['too_large'] );
+		$largest_label = isset( $state['too_large_label'] ) ? (string) $state['too_large_label'] : '';
+
 		foreach ( self::entries( $page ) as $entry ) {
+			if ( isset( $entry['nfc'] ) && 0 === (int) $entry['nfc'] ) {
+				++$state['nfc_names'];
+			}
 			if ( isset( $entry['skip'] ) ) {
+				if ( 'too_large' === (string) $entry['skip'] ) {
+					$too_large = true;
+					if ( '' === $largest_label ) {
+						$largest_label = (string) $entry['p'];
+					}
+				}
 				$state = $this->record_skip( $state, $entry );
 				continue;
 			}
 			$rel = Paths::normalize_relative( $entry['p'] );
 			if ( null === $rel ) {
+				continue;
+			}
+			$size_raw = isset( $entry['s'] ) ? $entry['s'] : 0;
+			if ( Paths::php_int_size() < 8 && Paths::size_exceeds_int_max( $size_raw ) ) {
+				$too_large = true;
+				if ( '' === $largest_label ) {
+					$largest_label = $rel;
+				}
+				$state = $this->record_skip(
+					$state,
+					array(
+						'p'    => $rel,
+						'skip' => 'too_large',
+						's'    => -1,
+					)
+				);
 				continue;
 			}
 			$size  = isset( $entry['s'] ) ? max( 0, (int) $entry['s'] ) : 0;
@@ -299,8 +336,23 @@ final class PullJob implements Job {
 			}
 		}
 
+		$state['too_large']       = $too_large;
+		$state['too_large_label'] = $largest_label;
+
 		$state['cursor'] = isset( $page['cursor'] ) ? (string) $page['cursor'] : (string) $state['cursor'];
 		if ( ! empty( $page['done'] ) ) {
+			if ( $too_large ) {
+				$label = '' !== $largest_label ? $largest_label : __( 'an unnamed file', 'iworksie-migrate' );
+				return $this->fail(
+					$state,
+					sprintf(
+						/* translators: %s: largest file path or size label */
+						__( 'This server runs 32-bit PHP, which can\'t handle files over 2 GB (largest: %s). Ask your host for 64-bit PHP.', 'iworksie-migrate' ),
+						$label
+					),
+					__( 'Ask your host for 64-bit PHP on this site (and on the other site if it is also 32-bit), then start again.', 'iworksie-migrate' )
+				);
+			}
 			$state['phase']  = 'copy';
 			$state['cursor'] = '';
 			$state['queue']  = array();
@@ -418,6 +470,7 @@ final class PullJob implements Job {
 		}
 		$base  = $this->base();
 		$local = $base . '/' . $rel;
+		$this->restore_aside( $local );
 
 		if ( is_dir( $local ) ) {
 			return $this->record_kept( $state, $rel, $size );
@@ -648,26 +701,30 @@ final class PullJob implements Job {
 			$state = $this->abandon_file( $state );
 			return $this->record_error( $state, (string) $cur['p'], __( 'The copied file was the wrong size and was discarded.', 'iworksie-migrate' ), 0 );
 		}
-		// Replace without a delete-before-rename window: move the existing file
-		// aside, rename the part into place, then delete the aside copy. A crash
-		// between the renames leaves either the old file or the new one.
-		$aside = '';
-		if ( file_exists( $local ) && ! is_dir( $local ) ) {
-			$aside = $local . '.iwiemg-old-' . wp_generate_password( 8, false, false );
-			if ( ! @rename( $local, $aside ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.rename_rename -- same-folder atomic move.
+		// Prefer a direct rename (atomic replace on POSIX). Fall back to an
+		// aside swap with the fixed .iwiemg-old suffix when rename will not
+		// overwrite (Windows) or otherwise fails while the destination exists.
+		if ( ! @rename( $part, $local ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.rename_rename -- atomic move within the same folder.
+			$aside = $local . Paths::OLD_SUFFIX;
+			if ( file_exists( $local ) && ! is_dir( $local ) ) {
+				if ( ! @rename( $local, $aside ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.rename_rename -- same-folder atomic move.
+					$state = $this->abandon_file( $state );
+					return $this->record_error( $state, (string) $cur['p'], __( 'Could not move the copied file into place.', 'iworksie-migrate' ), 0 );
+				}
+				if ( ! @rename( $part, $local ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.rename_rename -- atomic move within the same folder.
+					if ( file_exists( $aside ) ) {
+						@rename( $aside, $local ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.rename_rename -- restore previous file after failed replace.
+					}
+					$state = $this->abandon_file( $state );
+					return $this->record_error( $state, (string) $cur['p'], __( 'Could not move the copied file into place.', 'iworksie-migrate' ), 0 );
+				}
+				if ( file_exists( $aside ) ) {
+					wp_delete_file( $aside );
+				}
+			} else {
 				$state = $this->abandon_file( $state );
 				return $this->record_error( $state, (string) $cur['p'], __( 'Could not move the copied file into place.', 'iworksie-migrate' ), 0 );
 			}
-		}
-		if ( ! @rename( $part, $local ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.rename_rename -- atomic move within the same folder.
-			if ( '' !== $aside && file_exists( $aside ) ) {
-				@rename( $aside, $local ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.rename_rename -- restore previous file after failed replace.
-			}
-			$state = $this->abandon_file( $state );
-			return $this->record_error( $state, (string) $cur['p'], __( 'Could not move the copied file into place.', 'iworksie-migrate' ), 0 );
-		}
-		if ( '' !== $aside && file_exists( $aside ) ) {
-			wp_delete_file( $aside );
 		}
 		$stat = @stat( dirname( $local ) ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 		if ( is_array( $stat ) ) {
@@ -786,6 +843,12 @@ final class PullJob implements Job {
 	 */
 	private function handle_error( array $state, \WP_Error $error ) {
 		$explained = Client::explain( $error );
+		$code      = (string) $error->get_error_code();
+		if ( in_array( $code, array( 'iwiemg_unknown_key', 'iwiemg_not_enabled' ), true ) ) {
+			// Key expired, revoked or replaced: drop the stored secret so a DB
+			// backup of the receiver cannot keep a dead credential.
+			delete_option( self::KEY_OPTION );
+		}
 		if ( Client::is_transient( $error ) ) {
 			$state['net_failures'] = (int) $state['net_failures'] + 1;
 			$state['last_error']   = $explained[0];
@@ -795,6 +858,27 @@ final class PullJob implements Job {
 			return $state;
 		}
 		return $this->fail( $state, $explained[0], $explained[1] );
+	}
+
+	/**
+	 * Restore or tidy a .iwiemg-old aside file from a crashed Replace.
+	 *
+	 * If the destination is missing and the aside exists, rename it back.
+	 * If both exist, the new file won: delete the aside.
+	 *
+	 * @param string $local Absolute destination path.
+	 * @return void
+	 */
+	private function restore_aside( $local ) {
+		$aside = $local . Paths::OLD_SUFFIX;
+		if ( ! file_exists( $aside ) || is_dir( $aside ) ) {
+			return;
+		}
+		if ( ! file_exists( $local ) ) {
+			@rename( $aside, $local ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.rename_rename -- resume recovery.
+			return;
+		}
+		wp_delete_file( $aside );
 	}
 
 	/**

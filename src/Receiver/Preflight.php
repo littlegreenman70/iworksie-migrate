@@ -148,12 +148,22 @@ final class Preflight {
 			}
 		}
 
-		$base = Paths::uploads_base();
+		// Create the uploads folder if WordPress would on first upload (custom
+		// upload_path values often do not exist yet).
+		$dirs         = wp_upload_dir();
+		$display_path = ! empty( $dirs['basedir'] ) ? Paths::uploads_display_path( (string) $dirs['basedir'] ) : 'wp-content/uploads';
+		$base         = Paths::uploads_base( true );
 		if ( '' === $base || ! wp_is_writable( $base ) ) {
 			$results[] = Result::critical(
 				__( 'Uploads folder on this site', 'iworksie-migrate' ),
 				__( 'This site\'s uploads folder is missing or not writable.', 'iworksie-migrate' ),
-				array( 'fix' => __( 'Ask your host to make wp-content/uploads writable by the web server.', 'iworksie-migrate' ) )
+				array(
+					'fix' => sprintf(
+						/* translators: %s: uploads path relative to the site root */
+						__( 'Ask your host to make %s writable by the web server.', 'iworksie-migrate' ),
+						$display_path
+					),
+				)
 			);
 		} else {
 			$results[] = Result::good(

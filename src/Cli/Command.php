@@ -108,6 +108,12 @@ final class Command {
 				'verify'           => \WP_CLI\Utils\get_flag_value( $assoc, 'verify', true ) ? '1' : '0',
 			)
 		);
+		// Persist immediately so a kill in the first step budget can still resume.
+		$core = Plugin::instance()->core();
+		if ( null !== $core ) {
+			$state['job_id'] = PullJob::ID;
+			$core->jobs()->save_state( PullJob::ID, $state );
+		}
 		$this->drive( $job, $state );
 	}
 

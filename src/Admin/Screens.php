@@ -107,6 +107,15 @@ final class Screens {
 			echo esc_html( sprintf( __( 'Using the key for %s.', 'iworksie-migrate' ), $stored['h'] ) ) . ' ';
 			echo '<button type="button" class="button-link" data-iwiemg-forget>' . esc_html__( 'Use a different key', 'iworksie-migrate' ) . '</button>';
 			echo '</p>';
+		} elseif (
+			! empty( $status['done'] )
+			&& empty( $status['cancelled'] )
+			&& ! empty( $status['exists'] )
+			&& isset( $status['status'] )
+			&& 'critical' !== $status['status']
+		) {
+			// Successful run cleared the key: prompt for a fresh paste to copy again.
+			echo '<p class="iwiemg-done-hint" data-iwiemg-done-hint>' . esc_html__( 'Done. To copy again (for example, to pick up new uploads), paste a fresh key.', 'iworksie-migrate' ) . '</p>';
 		}
 		echo '<div class="iwiemg-key-form"' . ( null !== $stored ? ' hidden' : '' ) . ' data-iwiemg-key-form>';
 		echo '<label for="iwiemg-key" class="iwiemg-label">' . esc_html__( 'Migration key from the other site', 'iworksie-migrate' ) . '</label>';

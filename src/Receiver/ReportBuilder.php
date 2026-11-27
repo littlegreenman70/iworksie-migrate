@@ -73,6 +73,7 @@ final class ReportBuilder {
 			'part_file'     => __( 'unfinished download', 'iworksie-migrate' ),
 			'symlink'       => __( 'symbolic link', 'iworksie-migrate' ),
 			'hardlink'      => __( 'hard link (never copied, for safety)', 'iworksie-migrate' ),
+			'not_regular'   => __( 'not a regular file (skipped for safety)', 'iworksie-migrate' ),
 			'too_large'     => __( 'larger than this PHP build can address (needs 64-bit PHP for files over about 2 GB)', 'iworksie-migrate' ),
 			'unreadable'    => __( 'unreadable on the other site', 'iworksie-migrate' ),
 			'bad_name'      => __( 'unsupported file name', 'iworksie-migrate' ),
@@ -125,6 +126,15 @@ final class ReportBuilder {
 			if ( ! empty( $summary['failed_fix'] ) ) {
 				$lines[] = '**' . __( 'What to do:', 'iworksie-migrate' ) . '** ' . (string) $summary['failed_fix'];
 			}
+		}
+		$nfc = isset( $summary['nfc_names'] ) ? (int) $summary['nfc_names'] : 0;
+		if ( $nfc > 0 ) {
+			$lines[] = '';
+			$lines[] = sprintf(
+				/* translators: %s: number of file names */
+				__( '%s file names use a different Unicode form (common when files were uploaded from a Mac). They were copied with their exact names.', 'iworksie-migrate' ),
+				number_format_i18n( $nfc )
+			);
 		}
 		$lines[] = '';
 		$lines[] = '| | ' . __( 'Files', 'iworksie-migrate' ) . ' |';

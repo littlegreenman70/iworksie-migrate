@@ -189,7 +189,8 @@ final class Ajax {
 		if ( ! empty( $state['done'] ) && empty( $state['cancelled'] ) && isset( $state['result'] ) && is_array( $state['result'] ) ) {
 			$payload['status']   = ReportBuilder::status( $state['result'] );
 			$payload['headline'] = ReportBuilder::headline( $state['result'] );
-			$payload['failed']   = isset( $state['result']['failed_fix'] ) ? (string) $state['result']['failed_fix'] : '';
+			// "failed" here is the fix text shown under the outcome (legacy key name).
+			$payload['failed'] = isset( $state['result']['failed_fix'] ) ? (string) $state['result']['failed_fix'] : '';
 		}
 		return $payload;
 	}
