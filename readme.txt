@@ -83,7 +83,11 @@ Keys that point at localhost, .local hosts or private IP ranges are allowed so L
 
 = File names from macOS to Linux =
 
-File names are copied as raw bytes. macOS often stores Unicode names as NFD and Linux as NFC, so the same visible name can look like two different files. This version detects that limitation but does not rewrite names.
+File names are copied as raw bytes. macOS often stores Unicode names as NFD and Linux as NFC, so the same visible name can look like two different files. This version detects that limitation but does not rewrite names. The report notes how many names used a different Unicode form.
+
+= Files over 2 GB =
+
+Files over 2 GB need 64-bit PHP on both sites. On 32-bit PHP the copy stops before writing anything when a listed file is too large.
 
 = What happens if the connection drops? =
 
@@ -113,11 +117,13 @@ Yes. No paid version, no upsells, no data sent anywhere except between your own 
 
 = 1.0.0 =
 * Initial release: site-to-site copy of the uploads folder with pairing key, pre-flight checks on both sites, disk space check, resumable chunked transfer, SHA-1 verification report and WP-CLI commands.
-* Refuse hardlinks on the giving site (symlinks were already refused).
+* Refuse hardlinks on the giving site (symlinks were already refused); optional `iwiemg_allow_hardlinks` filter; list non-regular files as skipped.
 * Atomic sequence-number claim to close a replay race under concurrent requests.
-* Pre-flight notices for private/local key URLs, 32-bit PHP / files over about 2 GB, and Unicode NFC/NFD file name forms (detect only, no rewrite).
-* Clear the pasted receiver key after a successful copy; replace existing files with an aside-then-rename so a crash cannot lose both copies.
-* Tests for hardlinks, sequence claim, custom upload_path, NFC detection and private URL detection.
+* Pre-flight notices for private/local key URLs, 32-bit PHP / files over about 2 GB (hard stop after listing when any file is too large), and Unicode NFC/NFD file name forms (detect only, with a report note).
+* Clear the pasted receiver key after a successful copy or when the giver revokes/expires it; show a Done hint before pasting a fresh key.
+* Replace via direct rename first, with a fixed `.iwiemg-old` aside fallback; block `.iwiemg-part` and `.iwiemg-old` from travelling between sites.
+* WP-CLI saves job state as soon as a pull starts so an early kill can resume; pre-flight creates a missing custom upload_path via `wp_upload_dir()`.
+* Tests for hardlinks, sequence claim, custom upload_path, NFC detection, private URL detection, aside blocking and revoke key clear.
 
 == Upgrade Notice ==
 

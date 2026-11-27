@@ -1,8 +1,8 @@
 # iWorks.ie Migrate 1.0.0 review
 
-Independent review of `claude/migrate-1.0.0` after Part A setup on Cormac's iMac (Europe/Dublin). A later pass on the same branch applied triage fixes F1–F7, F14 and F15 (see Fixes applied below). F8–F13 remain deferred in `DECISIONS.md`.
+Independent review of `claude/migrate-1.0.0` after Part A setup on Cormac's iMac (Europe/Dublin). Later passes on the same branch applied triage fixes F1–F7, F14, F15 and Docker two-site gaps G1–G8 (see Fixes applied below). F8–F13 remain deferred in `DECISIONS.md`. F2 is accepted as-is.
 
-**Verdict: ready for a two-site test.** The claimed Media Library pull design holds in code and in the automated suite. Hardlinks, seq CAS, 2 GB / 32-bit notice, NFC detect-only, private URL notice, receiver key clearing and atomic replace are in. Local lint, analyse, unit, integration, Plugin Check, Playwright admin smoke and GitHub CI should be re-checked after that fix pass.
+**Verdict: ready for a two-site re-test.** The claimed Media Library pull design holds in code and in the automated suite. Hardlinks, seq CAS, 2 GB / 32-bit hard stop, NFC report note, private URL notice, receiver key clearing (including on revoke), rename-first replace with fixed `.iwiemg-old`, and custom `upload_path` creation are in. Re-check local lint, analyse, unit, integration, Plugin Check, Playwright and GitHub CI after G1–G8.
 
 ---
 
@@ -20,6 +20,14 @@ Independent review of `claude/migrate-1.0.0` after Part A setup on Cormac's iMac
 | F14 | Fixed | Unit/integration coverage for hardlinks, seq claim, NFC, private URL, custom `upload_path`, key clear. |
 | F15 | Fixed | README Local development notes Plugin Check on `build/iworksie-migrate`. |
 | F8–F13 | Deferred | Reasons in `DECISIONS.md`. |
+| G1 | Fixed | Fixed `Paths::OLD_SUFFIX = '.iwiemg-old'`; `blocked_reason` also matches legacy `.iwiemg-old-XXXXXXXX`; chunk refuses both. |
+| G2 | Fixed | `complete_file` tries `rename(part, dest)` first; aside fallback uses fixed suffix; `restore_aside` on resume / begin_file. |
+| G3 | Fixed | `safe_filesize` probes past 2 GB on 32-bit (`iwiemg_php_int_size`); count phase hard-stops with plain-English cause. |
+| G4 | Fixed | `handle_error` deletes receiver key on `iwiemg_unknown_key` / `iwiemg_not_enabled`; receive screen shows Done hint after success. |
+| G5 | Fixed | `PullJob` counts `nfc === 0`; `ReportBuilder` adds the Unicode form note when N > 0. |
+| G6 | Fixed | Filter `iwiemg_allow_hardlinks`; Walker lists FIFOs/sockets/devices as `not_regular`. |
+| G7 | Fixed | CLI `pull` saves job state immediately after `start()`. |
+| G8 | Fixed | Pre-flight calls `wp_upload_dir()` (creates folder) and names the real relative path in the writable message. |
 
 ---
 

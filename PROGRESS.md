@@ -12,6 +12,7 @@
 - [x] WP-CLI: `key-create`, `key-revoke`, `pull`, `resume`.
 - [x] readme.txt, README.md, DECISIONS.md, .pot, 4 real screenshots in `.wordpress-org/`.
 - [x] Review triage F1–F7, F14, F15 on `claude/migrate-1.0.0` (atomic seq, 2 GB / 32-bit notice, NFC detect-only, private URL notice, clear receiver key after success, atomic replace, tests, README Plugin Check note). F8–F13 deferred in DECISIONS.md.
+- [x] Docker two-site gaps G1–G8 on `claude/migrate-1.0.0`: fixed `.iwiemg-old` + block, rename-first replace, 32-bit probe hard stop, revoke clears receiver key + Done hint, NFC report note, hardlink filter + `not_regular` listing, CLI save after start, `wp_upload_dir` creates custom upload_path. F2 accepted as-is.
 
 ### Verified (all on 2026-11-27)
 
