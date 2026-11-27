@@ -286,4 +286,98 @@ final class PullFlowTest extends WP_UnitTestCase {
 		$response = rest_get_server()->dispatch( $request );
 		$this->assertSame( 403, $response->get_status() );
 	}
+
+	public function test_hardlink_inside_uploads_is_refused_by_chunk() {
+		$outside = sys_get_temp_dir() . '/iwiemg-secret-' . uniqid();
+		file_put_contents( $outside, 'SECRET-OUTSIDE-UPLOADS' );
+		$inside = $this->giver . '/iwiemg-test/hard-secret.jpg';
+		wp_mkdir_p( dirname( $inside ) );
+		$linked = @link( $outside, $inside );
+		if ( ! $linked ) {
+			unlink( $outside );
+			$this->markTestSkipped( 'Hardlinks are not available on this filesystem.' );
+		}
+
+		$client = $this->client();
+		$res    = $client->call(
+			'chunk',
+			array(
+				'path'   => 'iwiemg-test/hard-secret.jpg',
+				'offset' => 0,
+				'length' => 100,
+			)
+		);
+		$this->assertWPError( $res );
+		$this->assertSame( 'iwiemg_bad_path', $res->get_error_code() );
+
+		$job   = new PullJob( $client, $this->receiver );
+		$state = $this->run_job( $job, $job->start( array( 'verify' => '0' ) ) );
+		$this->assertTrue( $state['done'] );
+		$this->assertArrayNotHasKey( 'iwiemg-test/hard-secret.jpg', array_flip( $this->received() ) );
+		$this->assertGreaterThanOrEqual( 1, (int) ( $state['skip_reasons']['hardlink'] ?? 0 ) );
+
+		@unlink( $inside );
+		@unlink( $outside );
+	}
+
+	public function test_claim_seq_is_atomic_against_replay() {
+		KeyStore::create( '1h' );
+		$seq = MigrationKey::next_seq();
+		$this->assertTrue( KeyStore::claim_seq( $seq ) );
+		$this->assertFalse( KeyStore::claim_seq( $seq ) );
+		$this->assertFalse( KeyStore::claim_seq( '1' ) );
+		$higher = $seq . '0';
+		if ( MigrationKey::seq_greater( $higher, $seq ) ) {
+			$this->assertTrue( KeyStore::claim_seq( $higher ) );
+		}
+	}
+
+	public function test_finish_clears_receiver_key_after_success() {
+		$key = KeyStore::create( '1h' );
+		update_option( PullJob::KEY_OPTION, $key, false );
+		$job   = new PullJob( new LoopbackClient( MigrationKey::decode( $key ) ), $this->receiver );
+		$state = $this->run_job( $job, $job->start( array( 'verify' => '0' ) ) );
+		$this->assertTrue( $state['done'] );
+		$this->assertSame( '', (string) $state['failed'] );
+		$job->finish( $state );
+		$this->assertFalse( (bool) get_option( PullJob::KEY_OPTION, false ) );
+	}
+
+	public function test_custom_upload_path_is_used_on_both_sides() {
+		$custom = sys_get_temp_dir() . '/iwiemg-custom-uploads-' . uniqid();
+		mkdir( $custom, 0777, true );
+		$custom = realpath( $custom );
+		file_put_contents( $custom . '/from-custom.png', 'custom-bytes' );
+
+		$filter = static function ( $dirs ) use ( $custom ) {
+			$dirs['path']    = $custom;
+			$dirs['basedir'] = $custom;
+			$dirs['url']     = 'http://example.test/custom-uploads';
+			$dirs['baseurl'] = 'http://example.test/custom-uploads';
+			$dirs['error']   = false;
+			return $dirs;
+		};
+		add_filter( 'upload_dir', $filter );
+
+		$this->assertSame( $custom, \IWorksIE\Migrate\Support\Paths::uploads_base() );
+
+		$client = $this->client();
+		$hello  = $client->call( 'hello', array() );
+		$this->assertIsArray( $hello );
+		$this->assertTrue( ! empty( $hello['uploads_readable'] ) );
+
+		$receiver = sys_get_temp_dir() . '/iwiemg-custom-receiver-' . uniqid();
+		mkdir( $receiver, 0777, true );
+		$receiver = realpath( $receiver );
+		$job      = new PullJob( $client, $receiver );
+		$state    = $this->run_job( $job, $job->start( array( 'verify' => '0' ) ) );
+		$this->assertTrue( $state['done'] );
+		$this->assertSame( '', (string) $state['failed'] );
+		$this->assertFileExists( $receiver . '/from-custom.png' );
+		$this->assertSame( 'custom-bytes', file_get_contents( $receiver . '/from-custom.png' ) );
+
+		remove_filter( 'upload_dir', $filter );
+		$this->rrmdir( $custom );
+		$this->rrmdir( $receiver );
+	}
 }

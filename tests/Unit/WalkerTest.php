@@ -46,6 +46,10 @@ final class WalkerTest extends TestCase {
 		if ( function_exists( 'symlink' ) ) {
 			@symlink( '/etc', $this->dir . '/link-out' );
 		}
+		file_put_contents( $this->dir . '/hard-src.jpg', 'hard' );
+		if ( function_exists( 'link' ) ) {
+			@link( $this->dir . '/hard-src.jpg', $this->dir . '/hard-dst.jpg' );
+		}
 	}
 
 	protected function tearDown(): void {
@@ -109,6 +113,14 @@ final class WalkerTest extends TestCase {
 		}
 		foreach ( array_keys( $entries ) as $p ) {
 			$this->assertStringStartsNotWith( 'link-out/', $p, 'Never follows symlinks' );
+		}
+		if ( isset( $entries['hard-dst.jpg'] ) || isset( $entries['hard-src.jpg'] ) ) {
+			if ( isset( $entries['hard-dst.jpg'] ) ) {
+				$this->assertSame( 'hardlink', $entries['hard-dst.jpg']['skip'] );
+			}
+			if ( isset( $entries['hard-src.jpg'] ) && isset( $entries['hard-src.jpg']['skip'] ) ) {
+				$this->assertSame( 'hardlink', $entries['hard-src.jpg']['skip'] );
+			}
 		}
 	}
 
