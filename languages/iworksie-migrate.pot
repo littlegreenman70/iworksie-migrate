@@ -9,9 +9,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-27T00:10:41+00:00\n"
+"POT-Creation-Date: 2026-11-27T13:34:23+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.11.0\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: iworksie-migrate\n"
 
 #. Plugin Name of the plugin
@@ -37,11 +37,13 @@ msgstr ""
 
 #. translators: 1: required PHP version, 2: current PHP version
 #: iworksie-migrate.php:47
+#, php-format
 msgid "iWorks.ie Migrate requires PHP %1$s or higher. This site is running PHP %2$s."
 msgstr ""
 
 #. translators: 1: required WordPress version, 2: current WordPress version
 #: iworksie-migrate.php:60
+#, php-format
 msgid "iWorks.ie Migrate requires WordPress %1$s or higher. This site is running WordPress %2$s."
 msgstr ""
 
@@ -91,6 +93,7 @@ msgstr ""
 
 #. translators: %s: human time difference, e.g. "23 hours"
 #: src/Admin/Screens.php:78
+#, php-format
 msgid "Expires in %s"
 msgstr ""
 
@@ -116,6 +119,7 @@ msgstr ""
 
 #. translators: %s: other site's address
 #: src/Admin/Screens.php:107
+#, php-format
 msgid "Using the key for %s."
 msgstr ""
 
@@ -123,154 +127,159 @@ msgstr ""
 msgid "Use a different key"
 msgstr ""
 
-#: src/Admin/Screens.php:112
+#: src/Admin/Screens.php:118
+msgid "Done. To copy again (for example, to pick up new uploads), paste a fresh key."
+msgstr ""
+
+#: src/Admin/Screens.php:121
 msgid "Migration key from the other site"
 msgstr ""
 
-#: src/Admin/Screens.php:114
+#: src/Admin/Screens.php:123
 #: src/Plugin.php:122
 msgid "Check connection"
 msgstr ""
 
-#: src/Admin/Screens.php:121
+#: src/Admin/Screens.php:130
 msgid "2. Copy the files"
 msgstr ""
 
-#: src/Admin/Screens.php:123
+#: src/Admin/Screens.php:132
 msgid "Copy options"
 msgstr ""
 
-#: src/Admin/Screens.php:124
+#: src/Admin/Screens.php:133
 msgid "Skip backups, caches, logs and database dumps (recommended)"
 msgstr ""
 
-#: src/Admin/Screens.php:125
+#: src/Admin/Screens.php:134
 msgid "Replace files that already exist here but are different"
 msgstr ""
 
-#: src/Admin/Screens.php:125
+#: src/Admin/Screens.php:134
 msgid "Off by default, so nothing on this site is overwritten. Files that are already identical are always skipped, so running the copy again only fetches what changed."
 msgstr ""
 
-#: src/Admin/Screens.php:126
+#: src/Admin/Screens.php:135
 msgid "Verify every file against the other site when finished (SHA-1)"
 msgstr ""
 
-#: src/Admin/Screens.php:134
+#: src/Admin/Screens.php:143
 msgid "Start copying"
 msgstr ""
 
-#: src/Admin/Screens.php:135
+#: src/Admin/Screens.php:144
 msgid "Resume"
 msgstr ""
 
-#: src/Admin/Screens.php:136
+#: src/Admin/Screens.php:145
 msgid "Cancel"
 msgstr ""
 
-#: src/Admin/Screens.php:148
-#: src/Receiver/ReportBuilder.php:131
+#: src/Admin/Screens.php:157
+#: src/Receiver/ReportBuilder.php:143
 msgid "Copied"
 msgstr ""
 
-#: src/Admin/Screens.php:149
+#: src/Admin/Screens.php:158
 msgid "Size copied"
 msgstr ""
 
-#: src/Admin/Screens.php:150
+#: src/Admin/Screens.php:159
 msgid "Already identical"
 msgstr ""
 
-#: src/Admin/Screens.php:151
+#: src/Admin/Screens.php:160
 msgid "Kept (different here)"
 msgstr ""
 
-#: src/Admin/Screens.php:152
-#: src/Receiver/ReportBuilder.php:149
+#: src/Admin/Screens.php:161
+#: src/Receiver/ReportBuilder.php:161
 msgid "Skipped"
 msgstr ""
 
-#: src/Admin/Screens.php:153
-#: src/Receiver/ReportBuilder.php:136
-#: src/Receiver/ReportBuilder.php:144
+#: src/Admin/Screens.php:162
+#: src/Receiver/ReportBuilder.php:148
+#: src/Receiver/ReportBuilder.php:156
 msgid "Errors"
 msgstr ""
 
-#: src/Admin/Screens.php:184
+#: src/Admin/Screens.php:193
 #: src/Plugin.php:135
 msgid "View full report"
 msgstr ""
 
-#: src/Admin/Screens.php:197
+#: src/Admin/Screens.php:206
 msgid "Create a key to let another site copy this site's Media Library files. The other site can only read files in wp-content/uploads; it cannot change anything here, see your database or reach any other folder. Script files and server config files (.php, .htaccess and similar) are never sent."
 msgstr ""
 
-#: src/Admin/Screens.php:200
+#: src/Admin/Screens.php:209
 #: src/Receiver/Preflight.php:33
 msgid "Migration key"
 msgstr ""
 
-#: src/Admin/Screens.php:205
+#: src/Admin/Screens.php:214
 #: src/Plugin.php:128
 msgid "A key is active."
 msgstr ""
 
 #. translators: %s: human time difference
-#: src/Admin/Screens.php:208
+#: src/Admin/Screens.php:217
+#, php-format
 msgid "Last used %s ago."
 msgstr ""
 
-#: src/Admin/Screens.php:211
+#: src/Admin/Screens.php:220
 msgid "The last key has expired. Nobody can copy this site until you create a new one."
 msgstr ""
 
-#: src/Admin/Screens.php:213
+#: src/Admin/Screens.php:222
 msgid "No key yet. Nobody can copy this site until you create one."
 msgstr ""
 
-#: src/Admin/Screens.php:218
+#: src/Admin/Screens.php:227
 msgid "Key works for"
 msgstr ""
 
-#: src/Admin/Screens.php:220
+#: src/Admin/Screens.php:229
 msgid "1 hour"
 msgstr ""
 
-#: src/Admin/Screens.php:221
+#: src/Admin/Screens.php:230
 msgid "24 hours"
 msgstr ""
 
-#: src/Admin/Screens.php:222
+#: src/Admin/Screens.php:231
 msgid "7 days"
 msgstr ""
 
-#: src/Admin/Screens.php:224
+#: src/Admin/Screens.php:233
 #: src/Plugin.php:126
 msgid "Create key"
 msgstr ""
 
-#: src/Admin/Screens.php:224
+#: src/Admin/Screens.php:233
 #: src/Plugin.php:127
 msgid "Replace key"
 msgstr ""
 
-#: src/Admin/Screens.php:225
+#: src/Admin/Screens.php:234
 msgid "Revoke key"
 msgstr ""
 
-#: src/Admin/Screens.php:229
+#: src/Admin/Screens.php:238
 msgid "Copy this key now and paste it into the site you are copying to. For security it is only shown once."
 msgstr ""
 
-#: src/Admin/Screens.php:245
+#: src/Admin/Screens.php:254
 msgid "No copy has run on this site yet"
 msgstr ""
 
-#: src/Admin/Screens.php:246
+#: src/Admin/Screens.php:255
 msgid "After a copy finishes, its full report (what was copied, skipped, kept and verified) appears here."
 msgstr ""
 
-#: src/Admin/Screens.php:254
+#: src/Admin/Screens.php:263
 msgid "Download report"
 msgstr ""
 
@@ -330,6 +339,7 @@ msgstr ""
 
 #. translators: %s: technical error message
 #: src/Receiver/Client.php:149
+#, php-format
 msgid "This site could not reach the other site (%s)."
 msgstr ""
 
@@ -339,6 +349,7 @@ msgstr ""
 
 #. translators: %s: redirect target URL
 #: src/Receiver/Client.php:155
+#, php-format
 msgid "The other site redirected the request to %s."
 msgstr ""
 
@@ -393,6 +404,7 @@ msgstr ""
 
 #. translators: 1: error code, 2: error message
 #: src/Receiver/Client.php:187
+#, php-format
 msgid "The other site returned an error: %1$s %2$s"
 msgstr ""
 
@@ -415,6 +427,7 @@ msgstr ""
 
 #. translators: 1: site name, 2: site address
 #: src/Receiver/Preflight.php:63
+#, php-format
 msgid "Connected to %1$s (%2$s) and the key was accepted."
 msgstr ""
 
@@ -470,144 +483,229 @@ msgstr ""
 msgid "Fine for a local or private network. For public sites, enable HTTPS on the other site and create a new key."
 msgstr ""
 
-#: src/Receiver/Preflight.php:109
-#: src/Receiver/Preflight.php:115
-msgid "Uploads folder on this site"
+#: src/Receiver/Preflight.php:107
+msgid "Private network address"
+msgstr ""
+
+#: src/Receiver/Preflight.php:108
+msgid "The key points at a private, loopback or local address. This site will contact that address directly."
 msgstr ""
 
 #: src/Receiver/Preflight.php:110
-msgid "This site's uploads folder is missing or not writable."
+msgid "That is normal for LAN and local development migrations, but a mistaken or malicious key can make this server request an internal host."
 msgstr ""
 
 #: src/Receiver/Preflight.php:111
-msgid "Ask your host to make wp-content/uploads writable by the web server."
+msgid "Only continue if you trust the key and expected a local or private target. For public sites, paste a key whose REST URL uses a public hostname."
 msgstr ""
 
-#: src/Receiver/Preflight.php:116
-msgid "This site's uploads folder is writable."
+#: src/Receiver/Preflight.php:119
+msgid "64-bit PHP"
 msgstr ""
 
 #: src/Receiver/Preflight.php:120
-msgid "Disk space on this site"
+msgid "At least one of the two sites runs 32-bit PHP. Files larger than about 2 GB cannot be listed or copied reliably on that build."
 msgstr ""
 
 #: src/Receiver/Preflight.php:122
+msgid "On 32-bit PHP, file sizes and byte offsets wrap above 2 GB, so a large Media Library can fail or loop."
+msgstr ""
+
+#: src/Receiver/Preflight.php:123
+msgid "Use 64-bit PHP on both sites for libraries that may contain files over 2 GB. Smaller libraries can still copy on 32-bit PHP."
+msgstr ""
+
+#: src/Receiver/Preflight.php:132
+#: src/Receiver/Preflight.php:141
+msgid "File name Unicode forms"
+msgstr ""
+
+#: src/Receiver/Preflight.php:133
+msgid "The PHP intl extension is missing on at least one site, so Unicode file name forms cannot be detected."
+msgstr ""
+
+#: src/Receiver/Preflight.php:135
+msgid "A macOS site often stores NFD file names while a Linux site stores NFC. The same visible name can then look like two different files."
+msgstr ""
+
+#: src/Receiver/Preflight.php:136
+msgid "Install the intl extension where possible. This version does not rewrite names; it copies and compares them as raw bytes."
+msgstr ""
+
+#: src/Receiver/Preflight.php:142
+msgid "File names are copied as raw bytes. This version detects non-NFC names but does not rewrite them."
+msgstr ""
+
+#: src/Receiver/Preflight.php:144
+msgid "A macOS giver (NFD) and a Linux receiver (NFC) can keep lookalike duplicates or fail a later verify if tools normalize names differently."
+msgstr ""
+
+#: src/Receiver/Preflight.php:145
+msgid "Prefer matching Unicode forms on both filesystems when you can. No action is required for ASCII-only Media Libraries."
+msgstr ""
+
+#: src/Receiver/Preflight.php:158
+#: src/Receiver/Preflight.php:170
+msgid "Uploads folder on this site"
+msgstr ""
+
+#: src/Receiver/Preflight.php:159
+msgid "This site's uploads folder is missing or not writable."
+msgstr ""
+
+#. translators: %s: uploads path relative to the site root
+#: src/Receiver/Preflight.php:163
+#, php-format
+msgid "Ask your host to make %s writable by the web server."
+msgstr ""
+
+#: src/Receiver/Preflight.php:171
+msgid "This site's uploads folder is writable."
+msgstr ""
+
+#: src/Receiver/Preflight.php:175
+msgid "Disk space on this site"
+msgstr ""
+
+#: src/Receiver/Preflight.php:177
 msgid "This server does not report free disk space. The copy will stop cleanly if the disk fills up."
 msgstr ""
 
 #. translators: %s: free space
-#: src/Receiver/Preflight.php:124
+#: src/Receiver/Preflight.php:179
+#, php-format
 msgid "%s free. The exact space needed is checked after the files are listed, before anything is copied."
 msgstr ""
 
-#: src/Receiver/PullJob.php:151
+#: src/Receiver/PullJob.php:152
 msgid "Listing files on the other site…"
 msgstr ""
 
-#: src/Receiver/PullJob.php:157
+#: src/Receiver/PullJob.php:158
 msgid "No migration key has been checked yet."
 msgstr ""
 
-#: src/Receiver/PullJob.php:157
+#: src/Receiver/PullJob.php:158
 msgid "Paste the key from the other site and press Check connection first."
 msgstr ""
 
-#: src/Receiver/PullJob.php:161
+#: src/Receiver/PullJob.php:162
 msgid "This site's uploads folder could not be found."
 msgstr ""
 
-#: src/Receiver/PullJob.php:161
+#: src/Receiver/PullJob.php:162
 msgid "Check the uploads path in Settings > Media, or ask your host why wp-content/uploads is missing."
 msgstr ""
 
-#: src/Receiver/PullJob.php:175
+#: src/Receiver/PullJob.php:176
 msgid "The migration key was removed while copying."
 msgstr ""
 
-#: src/Receiver/PullJob.php:175
+#: src/Receiver/PullJob.php:176
 msgid "Paste the key again and start a new copy. Files already copied will be skipped."
 msgstr ""
 
+#: src/Receiver/PullJob.php:345
+msgid "an unnamed file"
+msgstr ""
+
+#. translators: %s: largest file path or size label
+#: src/Receiver/PullJob.php:350
+#, php-format
+msgid "This server runs 32-bit PHP, which can't handle files over 2 GB (largest: %s). Ask your host for 64-bit PHP."
+msgstr ""
+
+#: src/Receiver/PullJob.php:353
+msgid "Ask your host for 64-bit PHP on this site (and on the other site if it is also 32-bit), then start again."
+msgstr ""
+
 #. translators: 1: bytes needed, 2: bytes free
-#: src/Receiver/PullJob.php:311
+#: src/Receiver/PullJob.php:368
+#, php-format
 msgid "Not enough disk space on this site: the copy needs %1$s but only %2$s is free."
 msgstr ""
 
-#: src/Receiver/PullJob.php:315
+#: src/Receiver/PullJob.php:372
 msgid "Free up space or ask your host for more, then start again. Leave \"Skip backups, caches and logs\" ticked to avoid copying dead weight."
 msgstr ""
 
-#: src/Receiver/PullJob.php:412
+#: src/Receiver/PullJob.php:469
 msgid "Refused: unsafe file name or type."
 msgstr ""
 
-#: src/Receiver/PullJob.php:434
+#: src/Receiver/PullJob.php:492
 msgid "Could not create the folder on this site."
 msgstr ""
 
-#: src/Receiver/PullJob.php:438
+#: src/Receiver/PullJob.php:496
 msgid "Refused: the folder on this site points outside the uploads folder."
 msgstr ""
 
-#: src/Receiver/PullJob.php:451
-#: src/Receiver/PullJob.php:522
-#: src/Receiver/PullJob.php:620
+#: src/Receiver/PullJob.php:509
+#: src/Receiver/PullJob.php:580
+#: src/Receiver/PullJob.php:678
 msgid "Could not write the file on this site."
 msgstr ""
 
-#: src/Receiver/PullJob.php:506
+#: src/Receiver/PullJob.php:564
 msgid "That file no longer exists on the other site."
 msgstr ""
 
-#: src/Receiver/PullJob.php:598
+#: src/Receiver/PullJob.php:656
 msgid "A chunk arrived damaged; retrying."
 msgstr ""
 
-#: src/Receiver/PullJob.php:603
+#: src/Receiver/PullJob.php:661
 msgid "The file changed on the other site while it was being copied. Run the copy again to pick up the new version."
 msgstr ""
 
-#: src/Receiver/PullJob.php:618
+#: src/Receiver/PullJob.php:676
 msgid "This site ran out of disk space while copying."
 msgstr ""
 
-#: src/Receiver/PullJob.php:618
+#: src/Receiver/PullJob.php:676
 msgid "Free up space, then start again. Files already copied will be skipped."
 msgstr ""
 
-#: src/Receiver/PullJob.php:644
+#: src/Receiver/PullJob.php:702
 msgid "The copied file was the wrong size and was discarded."
 msgstr ""
 
-#: src/Receiver/PullJob.php:651
+#: src/Receiver/PullJob.php:712
+#: src/Receiver/PullJob.php:719
+#: src/Receiver/PullJob.php:726
 msgid "Could not move the copied file into place."
 msgstr ""
 
-#: src/Receiver/PullJob.php:1012
+#: src/Receiver/PullJob.php:1115
 msgid "Paused: the other site stopped answering."
 msgstr ""
 
 #. translators: 1: attempt number, 2: max attempts
-#: src/Receiver/PullJob.php:1016
+#: src/Receiver/PullJob.php:1119
+#, php-format
 msgid "Connection problem, retrying (%1$d of %2$d)…"
 msgstr ""
 
-#: src/Receiver/PullJob.php:1019
+#: src/Receiver/PullJob.php:1122
 msgid "Finished."
 msgstr ""
 
 #. translators: 1: number of files, 2: size
-#: src/Receiver/PullJob.php:1024
+#: src/Receiver/PullJob.php:1127
+#, php-format
 msgid "Listing files on the other site… %1$s files, %2$s so far"
 msgstr ""
 
 #. translators: 1: bytes processed, 2: total bytes, 3: current file
-#: src/Receiver/PullJob.php:1028
+#: src/Receiver/PullJob.php:1131
+#, php-format
 msgid "Copying… %1$s of %2$s%3$s"
 msgstr ""
 
 #. translators: %d: files verified
-#: src/Receiver/PullJob.php:1035
+#: src/Receiver/PullJob.php:1138
+#, php-format
 msgid "Verifying copied files… %d checked"
 msgstr ""
 
@@ -617,16 +715,19 @@ msgstr ""
 
 #. translators: 1: files copied, 2: size copied, 3: files already identical
 #: src/Receiver/ReportBuilder.php:47
+#, php-format
 msgid "Copied %1$s files (%2$s). %3$s files were already identical and were skipped."
 msgstr ""
 
 #. translators: %s: number of files
 #: src/Receiver/ReportBuilder.php:56
+#, php-format
 msgid "All %s files were verified against the other site."
 msgstr ""
 
 #. translators: %s: number of files
 #: src/Receiver/ReportBuilder.php:58
+#, php-format
 msgid "%s files did not match the other site after copying."
 msgstr ""
 
@@ -647,166 +748,185 @@ msgid "symbolic link"
 msgstr ""
 
 #: src/Receiver/ReportBuilder.php:75
-msgid "unreadable on the other site"
+msgid "hard link (never copied, for safety)"
 msgstr ""
 
 #: src/Receiver/ReportBuilder.php:76
-msgid "unsupported file name"
+msgid "not a regular file (skipped for safety)"
 msgstr ""
 
 #: src/Receiver/ReportBuilder.php:77
-msgid "backup"
+msgid "larger than this PHP build can address (needs 64-bit PHP for files over about 2 GB)"
 msgstr ""
 
 #: src/Receiver/ReportBuilder.php:78
-msgid "cache"
+msgid "unreadable on the other site"
 msgstr ""
 
 #: src/Receiver/ReportBuilder.php:79
-msgid "development folder"
+msgid "unsupported file name"
 msgstr ""
 
 #: src/Receiver/ReportBuilder.php:80
-msgid "log file"
+msgid "backup"
 msgstr ""
 
 #: src/Receiver/ReportBuilder.php:81
+msgid "cache"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:82
+msgid "development folder"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:83
+msgid "log file"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:84
 msgid "database dump or archive"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:102
+#: src/Receiver/ReportBuilder.php:105
 msgid "iWorks.ie Migrate report"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:104
+#: src/Receiver/ReportBuilder.php:107
 msgid "From:"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:105
+#: src/Receiver/ReportBuilder.php:108
 msgid "To:"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:107
+#: src/Receiver/ReportBuilder.php:110
 msgid "Started:"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:110
+#: src/Receiver/ReportBuilder.php:113
 msgid "Finished:"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:112
+#: src/Receiver/ReportBuilder.php:115
 msgid "Options:"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:113
+#: src/Receiver/ReportBuilder.php:116
 msgid "replace different files"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:113
+#: src/Receiver/ReportBuilder.php:116
 msgid "keep different files already here"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:114
+#: src/Receiver/ReportBuilder.php:117
 msgid "skip backups/caches/logs"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:114
+#: src/Receiver/ReportBuilder.php:117
 msgid "include backups/caches/logs"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:115
+#: src/Receiver/ReportBuilder.php:118
 msgid "verify"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:115
+#: src/Receiver/ReportBuilder.php:118
 msgid "no verification"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:117
+#: src/Receiver/ReportBuilder.php:120
 msgid "Result"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:122
+#: src/Receiver/ReportBuilder.php:125
 msgid "Stopped:"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:124
+#: src/Receiver/ReportBuilder.php:127
 msgid "What to do:"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:128
-msgid "Files"
-msgstr ""
-
-#: src/Receiver/ReportBuilder.php:130
-msgid "On the other site (after skips)"
-msgstr ""
-
-#: src/Receiver/ReportBuilder.php:132
-msgid "Of which replaced a different file"
-msgstr ""
-
-#: src/Receiver/ReportBuilder.php:133
-msgid "Already identical, skipped"
-msgstr ""
-
-#: src/Receiver/ReportBuilder.php:134
-msgid "Different file already here, kept"
-msgstr ""
-
+#. translators: %s: number of file names
 #: src/Receiver/ReportBuilder.php:135
-msgid "Skipped (safety / dead weight)"
-msgstr ""
-
-#: src/Receiver/ReportBuilder.php:138
-msgid "Verified (SHA-1 match)"
-msgstr ""
-
-#: src/Receiver/ReportBuilder.php:139
-msgid "Did not match"
+#, php-format
+msgid "%s file names use a different Unicode form (common when files were uploaded from a Mac). They were copied with their exact names."
 msgstr ""
 
 #: src/Receiver/ReportBuilder.php:140
-msgid "Missing after copy"
+msgid "Files"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:142
+msgid "On the other site (after skips)"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:144
+msgid "Of which replaced a different file"
 msgstr ""
 
 #: src/Receiver/ReportBuilder.php:145
-msgid "Did not match after copying"
+msgid "Already identical, skipped"
 msgstr ""
 
 #: src/Receiver/ReportBuilder.php:146
-msgid "Missing after copying"
+msgid "Different file already here, kept"
 msgstr ""
 
 #: src/Receiver/ReportBuilder.php:147
+msgid "Skipped (safety / dead weight)"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:150
+msgid "Verified (SHA-1 match)"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:151
+msgid "Did not match"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:152
+msgid "Missing after copy"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:157
+msgid "Did not match after copying"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:158
+msgid "Missing after copying"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:159
 msgid "Different file already on this site (kept; tick \"Replace\" and run again to overwrite)"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:148
+#: src/Receiver/ReportBuilder.php:160
 msgid "Replaced"
 msgstr ""
 
 #. translators: %s: number of further items
-#: src/Receiver/ReportBuilder.php:179
+#: src/Receiver/ReportBuilder.php:191
+#, php-format
 msgid "…and %s more"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:184
+#: src/Receiver/ReportBuilder.php:196
 msgid "Next steps"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:186
+#: src/Receiver/ReportBuilder.php:198
 msgid "This copies files only. Media Library entries live in the database: move the database first (or afterwards) with your usual tool."
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:187
+#: src/Receiver/ReportBuilder.php:199
 msgid "If the site address changed, update old URLs in the database, for example with the free iWorks.ie Search & Replace plugin (\"Change domain\")."
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:188
+#: src/Receiver/ReportBuilder.php:200
 msgid "Delete or let expire the migration key on the other site when you are done."
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:190
+#: src/Receiver/ReportBuilder.php:202
 msgid "Generated by iWorks.ie Migrate. Need a custom plugin? iWorks builds them: https://www.iworks.ie"
 msgstr ""
