@@ -233,13 +233,16 @@ final class PullFlowTest extends WP_UnitTestCase {
 	}
 
 	public function test_revoked_key_stops_job_with_plain_reason() {
-		$client = $this->client();
+		$key    = KeyStore::create( '1h' );
+		update_option( PullJob::KEY_OPTION, $key, false );
+		$client = new LoopbackClient( MigrationKey::decode( $key ) );
 		$job    = new PullJob( $client, $this->receiver );
 		$state  = $job->start( array() );
 		KeyStore::revoke();
 		$state = $this->run_job( $job, $state );
 		$this->assertTrue( $state['done'] );
 		$this->assertStringContainsString( 'no longer accepts this key', $state['failed'] );
+		$this->assertFalse( (bool) get_option( PullJob::KEY_OPTION, false ), 'Revoked key clears the stored receiver secret' );
 	}
 
 	public function test_signature_replay_and_expiry_are_rejected() {
@@ -341,6 +344,58 @@ final class PullFlowTest extends WP_UnitTestCase {
 		$this->assertSame( '', (string) $state['failed'] );
 		$job->finish( $state );
 		$this->assertFalse( (bool) get_option( PullJob::KEY_OPTION, false ) );
+	}
+
+	public function test_chunk_refuses_iwiemg_old_aside_files() {
+		$old = $this->giver . '/iwiemg-test/2024/05/photo.jpg.iwiemg-old';
+		file_put_contents( $old, 'ASIDE-LEFTOVER' );
+		$client = $this->client();
+		$res    = $client->call(
+			'chunk',
+			array(
+				'path'   => 'iwiemg-test/2024/05/photo.jpg.iwiemg-old',
+				'offset' => 0,
+				'length' => 100,
+			)
+		);
+		$this->assertWPError( $res );
+		$this->assertContains( $res->get_error_code(), array( 'iwiemg_bad_path', 'iwiemg_missing' ) );
+
+		$legacy = $this->giver . '/iwiemg-test/2024/05/photo.jpg.iwiemg-old-AbCd1234';
+		file_put_contents( $legacy, 'LEGACY-ASIDE' );
+		$res = $client->call(
+			'chunk',
+			array(
+				'path'   => 'iwiemg-test/2024/05/photo.jpg.iwiemg-old-AbCd1234',
+				'offset' => 0,
+				'length' => 100,
+			)
+		);
+		$this->assertWPError( $res );
+		@unlink( $old );
+		@unlink( $legacy );
+	}
+
+	public function test_replace_aside_restored_when_destination_missing() {
+		$dest  = $this->receiver . '/iwiemg-test/restore-me.jpg';
+		$aside = $dest . \IWorksIE\Migrate\Support\Paths::OLD_SUFFIX;
+		wp_mkdir_p( dirname( $dest ) );
+		file_put_contents( $aside, 'ORIGINAL-ASIDE' );
+		$this->assertFileDoesNotExist( $dest );
+
+		$job   = new PullJob( $this->client(), $this->receiver );
+		$state = $job->start( array( 'replace' => '1', 'verify' => '0' ) );
+		$state['cur'] = array(
+			'p'      => 'iwiemg-test/restore-me.jpg',
+			's'      => 14,
+			'm'      => time(),
+			'o'      => 0,
+			'exists' => true,
+		);
+		$state = $job->step( $state, 0.05 );
+		$this->assertFileExists( $dest );
+		$this->assertSame( 'ORIGINAL-ASIDE', file_get_contents( $dest ) );
+		$this->assertFileDoesNotExist( $aside );
 	}
 
 	public function test_custom_upload_path_is_used_on_both_sides() {

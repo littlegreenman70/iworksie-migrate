@@ -7,6 +7,8 @@
 
 namespace IWorksIE\Migrate\Tests\Unit;
 
+use Brain\Monkey;
+use Brain\Monkey\Functions;
 use IWorksIE\Migrate\Support\Paths;
 use PHPUnit\Framework\TestCase;
 
@@ -56,6 +58,9 @@ final class PathsTest extends TestCase {
 		$this->assertSame( 'server_config', Paths::blocked_reason( 'woocommerce_uploads/.htaccess' ) );
 		$this->assertSame( 'server_config', Paths::blocked_reason( '.user.ini' ) );
 		$this->assertSame( 'part_file', Paths::blocked_reason( 'a/b.jpg.iwiemg-part' ) );
+		$this->assertSame( 'part_file', Paths::blocked_reason( 'a/b.jpg.iwiemg-old' ) );
+		$this->assertSame( 'part_file', Paths::blocked_reason( 'a/photo.jpg.iwiemg-old-AbCd1234' ) );
+		$this->assertSame( '', Paths::blocked_reason( 'a/photo.jpg.iwiemg-old-toolong12' ) );
 	}
 
 	public function test_does_not_block_ordinary_media() {
@@ -135,6 +140,69 @@ final class PathsTest extends TestCase {
 		file_put_contents( $path, 'abcd' );
 		$this->assertSame( 4, Paths::safe_filesize( $path ) );
 		unlink( $path );
+	}
+
+	public function test_size_exceeds_int_max_digit_compare() {
+		Monkey\setUp();
+		Functions\when( 'apply_filters' )->alias(
+			static function ( $hook, $value ) {
+				return 'iwiemg_php_int_size' === $hook ? 4 : $value;
+			}
+		);
+		$this->assertFalse( Paths::size_exceeds_int_max( 100 ) );
+		$this->assertFalse( Paths::size_exceeds_int_max( '2147483647' ) );
+		$this->assertTrue( Paths::size_exceeds_int_max( '2147483648' ) );
+		$this->assertTrue( Paths::size_exceeds_int_max( '3000000000' ) );
+		Monkey\tearDown();
+	}
+
+	public function test_safe_filesize_on_injected_32bit_rejects_oversized_sparse_file() {
+		Monkey\setUp();
+		Functions\when( 'apply_filters' )->alias(
+			static function ( $hook, $value ) {
+				return 'iwiemg_php_int_size' === $hook ? 4 : $value;
+			}
+		);
+		$path = sys_get_temp_dir() . '/iwiemg-sparse-' . uniqid();
+		// Sparse ~3 GiB file: seek past 2 GB succeeds and fread returns 2 bytes.
+		$handle = fopen( $path, 'wb' );
+		$this->assertNotFalse( $handle );
+		ftruncate( $handle, 3 * 1024 * 1024 * 1024 );
+		fclose( $handle );
+		$this->assertNull( Paths::safe_filesize( $path ) );
+		unlink( $path );
+
+		$small = tempnam( sys_get_temp_dir(), 'iwiemg' );
+		file_put_contents( $small, 'ok' );
+		$this->assertSame( 2, Paths::safe_filesize( $small ) );
+		unlink( $small );
+		Monkey\tearDown();
+	}
+
+	public function test_unsafe_read_reason_allows_hardlinks_via_filter() {
+		Monkey\setUp();
+		$dir = sys_get_temp_dir() . '/iwiemg-paths-allow-' . uniqid();
+		mkdir( $dir, 0777, true );
+		$dir  = realpath( $dir );
+		$real = $dir . '/photo.jpg';
+		$hard = $dir . '/hard.jpg';
+		file_put_contents( $real, 'bytes' );
+		$linked = @link( $real, $hard );
+		if ( ! $linked ) {
+			$this->rrmdir( $dir );
+			Monkey\tearDown();
+			$this->markTestSkipped( 'Hardlinks are not available on this filesystem.' );
+		}
+		Functions\when( 'apply_filters' )->alias(
+			static function ( $hook, $value ) {
+				return 'iwiemg_allow_hardlinks' === $hook ? true : $value;
+			}
+		);
+		$this->assertSame( '', Paths::unsafe_read_reason( $hard, $dir ) );
+		unlink( $hard );
+		unlink( $real );
+		$this->rrmdir( $dir );
+		Monkey\tearDown();
 	}
 
 	/**

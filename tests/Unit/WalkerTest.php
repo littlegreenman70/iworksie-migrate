@@ -50,15 +50,19 @@ final class WalkerTest extends TestCase {
 		if ( function_exists( 'link' ) ) {
 			@link( $this->dir . '/hard-src.jpg', $this->dir . '/hard-dst.jpg' );
 		}
+		if ( function_exists( 'posix_mkfifo' ) ) {
+			@posix_mkfifo( $this->dir . '/pipe.fifo', 0600 );
+		}
 	}
 
 	protected function tearDown(): void {
 		$it = new \RecursiveIteratorIterator( new \RecursiveDirectoryIterator( $this->dir, \FilesystemIterator::SKIP_DOTS ), \RecursiveIteratorIterator::CHILD_FIRST );
 		foreach ( $it as $f ) {
-			if ( $f->isLink() || $f->isFile() ) {
-				unlink( $f->getPathname() );
+			$path = $f->getPathname();
+			if ( is_dir( $path ) && ! is_link( $path ) ) {
+				@rmdir( $path );
 			} else {
-				rmdir( $f->getPathname() );
+				@unlink( $path );
 			}
 		}
 		rmdir( $this->dir );
@@ -121,6 +125,9 @@ final class WalkerTest extends TestCase {
 			if ( isset( $entries['hard-src.jpg'] ) && isset( $entries['hard-src.jpg']['skip'] ) ) {
 				$this->assertSame( 'hardlink', $entries['hard-src.jpg']['skip'] );
 			}
+		}
+		if ( isset( $entries['pipe.fifo'] ) ) {
+			$this->assertSame( 'not_regular', $entries['pipe.fifo']['skip'] );
 		}
 	}
 
