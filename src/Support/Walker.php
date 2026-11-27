@@ -170,7 +170,17 @@ final class Walker {
 				continue;
 			}
 
-			if ( null !== $descend_after || ! is_file( $path ) ) {
+			if ( null !== $descend_after ) {
+				continue;
+			}
+			if ( ! is_file( $path ) ) {
+				// FIFOs, sockets, devices: list as skipped so they never disappear silently.
+				$this->emit(
+					array(
+						'p'    => $rel,
+						'skip' => 'not_regular',
+					)
+				);
 				continue;
 			}
 

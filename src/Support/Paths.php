@@ -20,6 +20,13 @@ final class Paths {
 	const PART_SUFFIX = '.iwiemg-part';
 
 	/**
+	 * Suffix for a destination file moved aside during Replace (fixed; no random part).
+	 *
+	 * @var string
+	 */
+	const OLD_SUFFIX = '.iwiemg-old';
+
+	/**
 	 * Extensions that are never copied, in either direction.
 	 * Uploads should only hold media; scripts there are almost always leftovers or malware.
 	 *
@@ -100,6 +107,13 @@ final class Paths {
 			return 'server_config';
 		}
 		if ( substr( $lower, -strlen( self::PART_SUFFIX ) ) === self::PART_SUFFIX ) {
+			return 'part_file';
+		}
+		if ( substr( $lower, -strlen( self::OLD_SUFFIX ) ) === self::OLD_SUFFIX ) {
+			return 'part_file';
+		}
+		// Leftover aside files from builds that used a random 8-char suffix.
+		if ( 1 === preg_match( '/\.iwiemg-old-[a-z0-9]{8}$/', $lower ) ) {
 			return 'part_file';
 		}
 		if ( in_array( self::extension( $base ), self::EXECUTABLE_EXTENSIONS, true ) ) {
@@ -183,7 +197,7 @@ final class Paths {
 	 *
 	 * @param string $path Absolute path as requested (the uploads join, not yet realpath'd).
 	 * @param string $base Real path of the uploads base directory.
-	 * @return string symlink|hardlink|missing|''
+	 * @return string symlink|hardlink|not_regular|missing|''
 	 */
 	public static function unsafe_read_reason( $path, $base ) {
 		if ( is_link( $path ) ) {
@@ -195,16 +209,80 @@ final class Paths {
 		}
 		// Regular file only (S_IFREG = 0100000).
 		if ( ! isset( $stat['mode'] ) || ( (int) $stat['mode'] & 0170000 ) !== 0100000 ) {
-			return 'missing';
+			return 'not_regular';
 		}
 		if ( isset( $stat['nlink'] ) && (int) $stat['nlink'] > 1 ) {
-			return 'hardlink';
+			/**
+			 * Whether hardlinked files under uploads may be listed and served.
+			 *
+			 * Default false. Some hosts hard-link uploads for deduplicating backups;
+			 * those setups can return true deliberately.
+			 *
+			 * @param bool   $allow Default false.
+			 * @param string $path  Absolute path being checked.
+			 */
+			$allow = function_exists( 'apply_filters' ) ? (bool) apply_filters( 'iwiemg_allow_hardlinks', false, $path ) : false;
+			if ( ! $allow ) {
+				return 'hardlink';
+			}
 		}
 		$real = realpath( $path );
 		if ( false === $real || ! is_file( $real ) || ! self::is_inside( $real, $base ) ) {
 			return 'missing';
 		}
 		return '';
+	}
+
+	/**
+	 * Effective PHP_INT_SIZE (filterable for tests).
+	 *
+	 * @return int
+	 */
+	public static function php_int_size() {
+		$size = PHP_INT_SIZE;
+		if ( function_exists( 'apply_filters' ) ) {
+			$size = (int) apply_filters( 'iwiemg_php_int_size', $size );
+		}
+		return $size;
+	}
+
+	/**
+	 * Largest addressable file size for the effective int size, as digit string.
+	 *
+	 * @return string
+	 */
+	public static function php_int_max_digits() {
+		return self::php_int_size() < 8 ? '2147483647' : (string) PHP_INT_MAX;
+	}
+
+	/**
+	 * Whether a size (int, float or digit string) is greater than this PHP's int max.
+	 *
+	 * @param mixed $size Size value from a listing entry.
+	 * @return bool
+	 */
+	public static function size_exceeds_int_max( $size ) {
+		if ( is_int( $size ) || is_float( $size ) ) {
+			$digits = sprintf( '%.0f', (float) $size );
+		} else {
+			$digits = preg_replace( '/\D/', '', (string) $size );
+		}
+		if ( ! is_string( $digits ) || '' === $digits ) {
+			return false;
+		}
+		$max = self::php_int_max_digits();
+		$a   = ltrim( $digits, '0' );
+		$b   = ltrim( $max, '0' );
+		if ( '' === $a ) {
+			$a = '0';
+		}
+		if ( '' === $b ) {
+			$b = '0';
+		}
+		if ( strlen( $a ) !== strlen( $b ) ) {
+			return strlen( $a ) > strlen( $b );
+		}
+		return strcmp( $a, $b ) > 0;
 	}
 
 	/**
@@ -275,6 +353,8 @@ final class Paths {
 	 * Read a file size safely for this PHP build.
 	 *
 	 * On 32-bit PHP, files at or above 2 GB cannot be addressed reliably; return null.
+	 * filesize() on those builds can wrap to a negative or a small positive, so a probe
+	 * seeks near 2 GB and checks whether two more bytes can be read.
 	 *
 	 * @param string $path Absolute path.
 	 * @return int|null Size in bytes, or null when unknown / too large for this PHP.
@@ -285,24 +365,74 @@ final class Paths {
 		if ( false === $size ) {
 			return null;
 		}
-		// On 32-bit PHP, oversized files often surface as PHP_INT_MAX.
-		if ( PHP_INT_SIZE < 8 && PHP_INT_MAX === (int) $size ) {
-			return null;
+		if ( self::php_int_size() < 8 ) {
+			// On real 32-bit PHP, oversized files can wrap filesize() to a negative int.
+			$as_int = (int) $size;
+			// PHPStan on 64-bit hosts thinks filesize() is always non-negative; keep the check for 32-bit.
+			if ( ( $as_int < 0 ) || ! self::probe_under_2gb( $path ) ) { // @phpstan-ignore smaller.alwaysFalse
+				return null;
+			}
 		}
 		return (int) $size;
 	}
 
 	/**
+	 * Whether a file is smaller than 2 GB (probe used on 32-bit PHP).
+	 *
+	 * @param string $path Absolute path.
+	 * @return bool True when under 2 GB (or unreadable in a way that looks small).
+	 */
+	public static function probe_under_2gb( $path ) {
+		// phpcs:disable WordPress.WP.AlternativeFunctions -- ranged size probe; WP_Filesystem has no fseek.
+		$handle = @fopen( $path, 'rb' ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		if ( false === $handle ) {
+			return false;
+		}
+		$int_max = (int) self::php_int_max_digits();
+		$seek_ok = 0 === @fseek( $handle, $int_max - 1 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		$bytes   = $seek_ok ? @fread( $handle, 2 ) : false; // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		fclose( $handle );
+		// phpcs:enable WordPress.WP.AlternativeFunctions
+		if ( ! $seek_ok ) {
+			return false;
+		}
+		if ( false === $bytes ) {
+			return false;
+		}
+		// Two bytes means the file reaches at least 2 GB.
+		return 2 !== strlen( $bytes );
+	}
+
+	/**
 	 * Real path of this site's uploads directory, or '' when missing.
 	 *
+	 * @param bool $create Whether to let WordPress create the folder (wp_upload_dir default).
 	 * @return string
 	 */
-	public static function uploads_base() {
-		$dirs = wp_upload_dir( null, false );
+	public static function uploads_base( $create = false ) {
+		$dirs = wp_upload_dir( null, (bool) $create );
 		if ( ! empty( $dirs['error'] ) || empty( $dirs['basedir'] ) ) {
 			return '';
 		}
 		$real = realpath( (string) $dirs['basedir'] );
 		return false === $real ? '' : $real;
+	}
+
+	/**
+	 * Uploads basedir as a path relative to ABSPATH when possible, else the absolute path.
+	 *
+	 * @param string $basedir Absolute basedir from wp_upload_dir().
+	 * @return string
+	 */
+	public static function uploads_display_path( $basedir ) {
+		$basedir = wp_normalize_path( (string) $basedir );
+		if ( defined( 'ABSPATH' ) ) {
+			$root = trailingslashit( wp_normalize_path( ABSPATH ) );
+			if ( 0 === strpos( $basedir, $root ) ) {
+				$rel = substr( $basedir, strlen( $root ) );
+				return '' === $rel ? $basedir : $rel;
+			}
+		}
+		return $basedir;
 	}
 }

@@ -227,7 +227,7 @@ final class Api {
 		$path   = $base . '/' . $rel;
 		$unsafe = Paths::unsafe_read_reason( $path, $base );
 		if ( '' !== $unsafe ) {
-			$code = 'hardlink' === $unsafe || 'symlink' === $unsafe ? 'iwiemg_bad_path' : 'iwiemg_missing';
+			$code = in_array( $unsafe, array( 'hardlink', 'symlink', 'not_regular' ), true ) ? 'iwiemg_bad_path' : 'iwiemg_missing';
 			return new \WP_Error( $code, 'That file cannot be sent.', array( 'status' => 'iwiemg_missing' === $code ? 404 : 400 ) );
 		}
 		$real = realpath( $path );
