@@ -37,6 +37,7 @@ Choices made while building v1.0.0 overnight without Cormac's input (he asked fo
 | 2026-11-26 | WP-CLI `key-create`, `key-revoke`, `pull`, `resume`; CLI and browser share job state | Huge sites can run without a browser tab or AJAX timeouts. |
 | 2026-11-26 | `Client` is not `final` | Integration tests subclass it to dispatch signed requests to the real REST server in-process. |
 | 2026-11-26 | Requires tools-core `^1.1` (same as Health Check); no core changes needed | Uses Jobs, UI, Page, Report, Menu as they are. |
+| 2026-11-27 | `bin/install-wp-tests.sh` resolves X.Y to the latest X.Y.Z and checks out matching `tags/X.Y.Z` tests (not trunk) | Preventive parity with SMTP / A11y / Security Audit so a future X.Y matrix pin does not pull trunk tests. |
 
 ## Candidates for core
 

@@ -34,3 +34,7 @@ Integration tests (`tests/Integration/PullFlowTest.php`) run the real REST endpo
 - [ ] Banner/icon artwork for `.wordpress-org/`.
 - [ ] v2: themes/plugins/full wp-content; v3: database + Search & Replace engine; multisite.
 - [ ] Deferred review items F8–F13 (see DECISIONS.md).
+
+## CI fixes (2026-11-27)
+
+- [x] install-wp-tests.sh tag matching (parity with other plugins; CI still uses latest)
