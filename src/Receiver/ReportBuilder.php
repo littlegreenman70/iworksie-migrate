@@ -72,6 +72,8 @@ final class ReportBuilder {
 			'server_config' => __( 'server config file such as .htaccess (never copied, for safety)', 'iworksie-migrate' ),
 			'part_file'     => __( 'unfinished download', 'iworksie-migrate' ),
 			'symlink'       => __( 'symbolic link', 'iworksie-migrate' ),
+			'hardlink'      => __( 'hard link (never copied, for safety)', 'iworksie-migrate' ),
+			'too_large'     => __( 'larger than this PHP build can address (needs 64-bit PHP for files over about 2 GB)', 'iworksie-migrate' ),
 			'unreadable'    => __( 'unreadable on the other site', 'iworksie-migrate' ),
 			'bad_name'      => __( 'unsupported file name', 'iworksie-migrate' ),
 			'backup'        => __( 'backup', 'iworksie-migrate' ),

@@ -175,6 +175,124 @@ final class Paths {
 	}
 
 	/**
+	 * Why a path must not be read as a media file ('' when safe).
+	 *
+	 * Refuses symlinks and hardlinks (nlink > 1). A hardlink under uploads that
+	 * shares an inode with a file outside uploads would otherwise pass realpath
+	 * and is_inside checks and leak that file over the giver API.
+	 *
+	 * @param string $path Absolute path as requested (the uploads join, not yet realpath'd).
+	 * @param string $base Real path of the uploads base directory.
+	 * @return string symlink|hardlink|missing|''
+	 */
+	public static function unsafe_read_reason( $path, $base ) {
+		if ( is_link( $path ) ) {
+			return 'symlink';
+		}
+		$stat = @lstat( $path ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- missing paths are reported, not fatal.
+		if ( ! is_array( $stat ) ) {
+			return 'missing';
+		}
+		// Regular file only (S_IFREG = 0100000).
+		if ( ! isset( $stat['mode'] ) || ( (int) $stat['mode'] & 0170000 ) !== 0100000 ) {
+			return 'missing';
+		}
+		if ( isset( $stat['nlink'] ) && (int) $stat['nlink'] > 1 ) {
+			return 'hardlink';
+		}
+		$real = realpath( $path );
+		if ( false === $real || ! is_file( $real ) || ! self::is_inside( $real, $base ) ) {
+			return 'missing';
+		}
+		return '';
+	}
+
+	/**
+	 * Whether a string is already Unicode NFC (or cannot be checked).
+	 *
+	 * Detect-only: callers may warn, but must not rewrite names.
+	 *
+	 * @param string $value Path segment or relative path.
+	 * @return bool True when Normalizer is missing or the value is already NFC.
+	 */
+	public static function is_nfc( $value ) {
+		if ( ! class_exists( '\Normalizer' ) ) {
+			return true;
+		}
+		$normalized = \Normalizer::normalize( (string) $value, \Normalizer::FORM_C );
+		if ( false === $normalized ) {
+			return true;
+		}
+		return $normalized === (string) $value;
+	}
+
+	/**
+	 * Whether a host/URL points at a private, loopback or link-local address.
+	 *
+	 * Used for a pre-flight notice only; the client still allows these targets
+	 * so LAN and local migrations keep working.
+	 *
+	 * @param string $url Absolute URL.
+	 * @return bool
+	 */
+	public static function url_is_private( $url ) {
+		// Native parse_url so unit tests without a WP stub can call this helper.
+		$host = parse_url( (string) $url, PHP_URL_HOST ); // phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url -- host-only check; no WP scheme normalisation needed.
+		if ( ! is_string( $host ) || '' === $host ) {
+			return false;
+		}
+		$lower = strtolower( $host );
+		if ( 'localhost' === $lower || '.local' === substr( $lower, -6 ) || '.test' === substr( $lower, -5 ) ) {
+			return true;
+		}
+		if ( self::ip_is_private( $host ) ) {
+			return true;
+		}
+		if ( filter_var( $host, FILTER_VALIDATE_IP ) ) {
+			return false;
+		}
+		$resolved = gethostbyname( $host );
+		if ( ! is_string( $resolved ) || $resolved === $host ) {
+			return false;
+		}
+		return self::ip_is_private( $resolved );
+	}
+
+	/**
+	 * Whether an IP string is private or reserved.
+	 *
+	 * @param string $ip IP address.
+	 * @return bool
+	 */
+	public static function ip_is_private( $ip ) {
+		if ( false === filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+			return false;
+		}
+		return false === filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE );
+	}
+
+	/**
+	 * Read a file size safely for this PHP build.
+	 *
+	 * On 32-bit PHP, files at or above 2 GB cannot be addressed reliably; return null.
+	 *
+	 * @param string $path Absolute path.
+	 * @return int|null Size in bytes, or null when unknown / too large for this PHP.
+	 */
+	public static function safe_filesize( $path ) {
+		clearstatcache( true, $path );
+		$size = @filesize( $path ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		if ( false === $size ) {
+			return null;
+		}
+		// On 32-bit PHP, oversized files often surface as PHP_INT_MAX.
+		if ( PHP_INT_SIZE < 8 && PHP_INT_MAX === (int) $size ) {
+			return null;
+		}
+		return (int) $size;
+	}
+
+	/**
 	 * Real path of this site's uploads directory, or '' when missing.
 	 *
 	 * @return string

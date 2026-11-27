@@ -101,6 +101,51 @@ final class Preflight {
 					)
 				);
 			}
+
+			if ( Paths::url_is_private( $client->giver_rest() ) ) {
+				$results[] = Result::recommended(
+					__( 'Private network address', 'iworksie-migrate' ),
+					__( 'The key points at a private, loopback or local address. This site will contact that address directly.', 'iworksie-migrate' ),
+					array(
+						'why' => __( 'That is normal for LAN and local development migrations, but a mistaken or malicious key can make this server request an internal host.', 'iworksie-migrate' ),
+						'fix' => __( 'Only continue if you trust the key and expected a local or private target. For public sites, paste a key whose REST URL uses a public hostname.', 'iworksie-migrate' ),
+					)
+				);
+			}
+
+			$giver_int_size = isset( $hello['php_int_size'] ) ? (int) $hello['php_int_size'] : 8;
+			if ( PHP_INT_SIZE < 8 || $giver_int_size < 8 ) {
+				$results[] = Result::recommended(
+					__( '64-bit PHP', 'iworksie-migrate' ),
+					__( 'At least one of the two sites runs 32-bit PHP. Files larger than about 2 GB cannot be listed or copied reliably on that build.', 'iworksie-migrate' ),
+					array(
+						'why' => __( 'On 32-bit PHP, file sizes and byte offsets wrap above 2 GB, so a large Media Library can fail or loop.', 'iworksie-migrate' ),
+						'fix' => __( 'Use 64-bit PHP on both sites for libraries that may contain files over 2 GB. Smaller libraries can still copy on 32-bit PHP.', 'iworksie-migrate' ),
+					)
+				);
+			}
+
+			$giver_intl = ! isset( $hello['has_intl'] ) || ! empty( $hello['has_intl'] );
+			$here_intl  = class_exists( '\Normalizer' );
+			if ( ! $giver_intl || ! $here_intl ) {
+				$results[] = Result::info(
+					__( 'File name Unicode forms', 'iworksie-migrate' ),
+					__( 'The PHP intl extension is missing on at least one site, so Unicode file name forms cannot be detected.', 'iworksie-migrate' ),
+					array(
+						'why' => __( 'A macOS site often stores NFD file names while a Linux site stores NFC. The same visible name can then look like two different files.', 'iworksie-migrate' ),
+						'fix' => __( 'Install the intl extension where possible. This version does not rewrite names; it copies and compares them as raw bytes.', 'iworksie-migrate' ),
+					)
+				);
+			} else {
+				$results[] = Result::info(
+					__( 'File name Unicode forms', 'iworksie-migrate' ),
+					__( 'File names are copied as raw bytes. This version detects non-NFC names but does not rewrite them.', 'iworksie-migrate' ),
+					array(
+						'why' => __( 'A macOS giver (NFD) and a Linux receiver (NFC) can keep lookalike duplicates or fail a later verify if tools normalize names differently.', 'iworksie-migrate' ),
+						'fix' => __( 'Prefer matching Unicode forms on both filesystems when you can. No action is required for ASCII-only Media Libraries.', 'iworksie-migrate' ),
+					)
+				);
+			}
 		}
 
 		$base = Paths::uploads_base();

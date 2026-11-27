@@ -93,11 +93,10 @@ final class Api {
 				)
 			);
 		}
-		if ( ! MigrationKey::seq_greater( $seq, KeyStore::last_seq() ) ) {
+		if ( ! KeyStore::claim_seq( $seq ) ) {
 			return new \WP_Error( 'iwiemg_replay', 'Request sequence number already used.', array( 'status' => 401 ) );
 		}
 
-		KeyStore::touch( $seq );
 		return true;
 	}
 
@@ -144,6 +143,8 @@ final class Api {
 				'uploads_readable' => '' !== $base && is_readable( $base ),
 				'wp_version'       => (string) $wp_version,
 				'php_version'      => PHP_VERSION,
+				'php_int_size'     => PHP_INT_SIZE,
+				'has_intl'         => class_exists( '\Normalizer' ),
 				'name'             => get_bloginfo( 'name' ),
 				'time'             => time(),
 				'key_expires'      => (int) ( KeyStore::active()['expires'] ?? 0 ),
@@ -223,16 +224,23 @@ final class Api {
 		if ( '' === $base || null === $rel || '' !== Paths::blocked_reason( $rel ) ) {
 			return new \WP_Error( 'iwiemg_bad_path', 'That file cannot be sent.', array( 'status' => 400 ) );
 		}
-		$path = $base . '/' . $rel;
+		$path   = $base . '/' . $rel;
+		$unsafe = Paths::unsafe_read_reason( $path, $base );
+		if ( '' !== $unsafe ) {
+			$code = 'hardlink' === $unsafe || 'symlink' === $unsafe ? 'iwiemg_bad_path' : 'iwiemg_missing';
+			return new \WP_Error( $code, 'That file cannot be sent.', array( 'status' => 'iwiemg_missing' === $code ? 404 : 400 ) );
+		}
 		$real = realpath( $path );
-		if ( false === $real || is_link( $path ) || ! is_file( $real ) || ! Paths::is_inside( $real, $base ) ) {
+		if ( false === $real ) {
 			return new \WP_Error( 'iwiemg_missing', 'That file no longer exists on this site.', array( 'status' => 404 ) );
 		}
 
 		$offset = isset( $body['offset'] ) ? max( 0, (int) $body['offset'] ) : 0;
 		$length = isset( $body['length'] ) ? max( 1, min( self::MAX_CHUNK, (int) $body['length'] ) ) : 1048576;
-		clearstatcache( true, $real );
-		$size = (int) filesize( $real );
+		$size   = Paths::safe_filesize( $real );
+		if ( null === $size ) {
+			return new \WP_Error( 'iwiemg_too_large', 'That file is too large for this PHP build (64-bit PHP is required for files over about 2 GB).', array( 'status' => 400 ) );
+		}
 
 		$data = '';
 		if ( $offset < $size ) {
@@ -289,15 +297,22 @@ final class Api {
 				continue;
 			}
 			$path = $base . '/' . $rel;
-			$real = realpath( $path );
-			if ( '' !== Paths::blocked_reason( $rel ) || false === $real || is_link( $path ) || ! is_file( $real ) || ! Paths::is_inside( $real, $base ) ) {
+			if ( '' !== Paths::blocked_reason( $rel ) || '' !== Paths::unsafe_read_reason( $path, $base ) ) {
 				$out[] = array(
 					'p'     => $rel,
 					'error' => 'missing',
 				);
 				continue;
 			}
-			$size = (int) filesize( $real );
+			$real = realpath( $path );
+			$size = false === $real ? null : Paths::safe_filesize( $real );
+			if ( null === $size ) {
+				$out[] = array(
+					'p'     => $rel,
+					'error' => 'missing',
+				);
+				continue;
+			}
 			if ( $size > 1048576 ) {
 				$out[] = array(
 					'p'     => $rel,

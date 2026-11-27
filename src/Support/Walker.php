@@ -174,7 +174,7 @@ final class Walker {
 				continue;
 			}
 
-			$size = (int) @filesize( $path ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			$size = Paths::safe_filesize( $path );
 			$skip = Paths::blocked_reason( $rel );
 			if ( '' === $skip && $this->skip_dead_weight ) {
 				$skip = Paths::dead_weight_reason( $rel, false );
@@ -182,27 +182,37 @@ final class Walker {
 			if ( '' === $skip && Paths::normalize_relative( $rel ) !== $rel ) {
 				$skip = 'bad_name';
 			}
+			$unsafe = Paths::unsafe_read_reason( $path, $this->base );
+			if ( '' === $skip && '' !== $unsafe && 'missing' !== $unsafe ) {
+				$skip = $unsafe;
+			}
+			if ( '' === $skip && null === $size ) {
+				$skip = 'too_large';
+			}
 			if ( '' === $skip && ! is_readable( $path ) ) {
 				$skip = 'unreadable';
 			}
 			if ( '' !== $skip ) {
-				$this->emit(
-					array(
-						'p'    => $rel,
-						'skip' => $skip,
-						's'    => $size,
-					)
+				$entry = array(
+					'p'    => $rel,
+					'skip' => $skip,
 				);
+				if ( null !== $size ) {
+					$entry['s'] = $size;
+				}
+				$this->emit( $entry );
 				continue;
 			}
 
-			$this->emit(
-				array(
-					'p' => $rel,
-					's' => $size,
-					'm' => (int) @filemtime( $path ), // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-				)
+			$entry = array(
+				'p' => $rel,
+				's' => (int) $size,
+				'm' => (int) @filemtime( $path ), // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 			);
+			if ( ! Paths::is_nfc( $rel ) ) {
+				$entry['nfc'] = 0;
+			}
+			$this->emit( $entry );
 		}
 	}
 

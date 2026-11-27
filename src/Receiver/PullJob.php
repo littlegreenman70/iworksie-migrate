@@ -220,6 +220,11 @@ final class PullJob implements Job {
 	public function finish( array $state ) {
 		$summary = self::summary( $state );
 		update_option( 'iwiemg_last_report', $summary, false );
+		// Drop the pasted key (including secret) after a successful run so DB
+		// backups of the receiver do not keep a live giver credential.
+		if ( empty( $state['cancelled'] ) && empty( $state['failed'] ) ) {
+			delete_option( self::KEY_OPTION );
+		}
 		return $summary;
 	}
 
@@ -643,12 +648,26 @@ final class PullJob implements Job {
 			$state = $this->abandon_file( $state );
 			return $this->record_error( $state, (string) $cur['p'], __( 'The copied file was the wrong size and was discarded.', 'iworksie-migrate' ), 0 );
 		}
+		// Replace without a delete-before-rename window: move the existing file
+		// aside, rename the part into place, then delete the aside copy. A crash
+		// between the renames leaves either the old file or the new one.
+		$aside = '';
 		if ( file_exists( $local ) && ! is_dir( $local ) ) {
-			wp_delete_file( $local );
+			$aside = $local . '.iwiemg-old-' . wp_generate_password( 8, false, false );
+			if ( ! @rename( $local, $aside ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.rename_rename -- same-folder atomic move.
+				$state = $this->abandon_file( $state );
+				return $this->record_error( $state, (string) $cur['p'], __( 'Could not move the copied file into place.', 'iworksie-migrate' ), 0 );
+			}
 		}
 		if ( ! @rename( $part, $local ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.rename_rename -- atomic move within the same folder.
+			if ( '' !== $aside && file_exists( $aside ) ) {
+				@rename( $aside, $local ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.rename_rename -- restore previous file after failed replace.
+			}
 			$state = $this->abandon_file( $state );
 			return $this->record_error( $state, (string) $cur['p'], __( 'Could not move the copied file into place.', 'iworksie-migrate' ), 0 );
+		}
+		if ( '' !== $aside && file_exists( $aside ) ) {
+			wp_delete_file( $aside );
 		}
 		$stat = @stat( dirname( $local ) ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 		if ( is_array( $stat ) ) {

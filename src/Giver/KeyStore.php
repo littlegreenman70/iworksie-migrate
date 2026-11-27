@@ -96,20 +96,41 @@ final class KeyStore {
 	}
 
 	/**
-	 * Record a successful request (at most once a minute, to keep writes low).
+	 * Atomically claim a sequence number if it is strictly greater than the last one.
 	 *
-	 * @param string $seq Sequence number just accepted.
-	 * @return void
+	 * Uses a MySQL named lock so two concurrent signed requests cannot both pass
+	 * against the same stored last-seq (compare-and-swap).
+	 *
+	 * @param string $seq Sequence number from the request.
+	 * @return bool True when claimed; false on replay or lock failure.
 	 */
-	public static function touch( $seq ) {
-		update_option( self::SEQ_OPTION, (string) $seq, false );
-		$key = self::stored();
-		if ( null === $key ) {
-			return;
+	public static function claim_seq( $seq ) {
+		global $wpdb;
+
+		$seq  = (string) $seq;
+		$lock = 'iwiemg_seq_' . (string) get_current_blog_id();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- named lock for compare-and-swap.
+		$got = $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 5)', $lock ) );
+		if ( '1' !== (string) $got ) {
+			return false;
 		}
-		if ( time() - (int) $key['last_used'] >= MINUTE_IN_SECONDS ) {
-			$key['last_used'] = time();
-			update_option( self::OPTION, $key, false );
+
+		try {
+			wp_cache_delete( self::SEQ_OPTION, 'options' );
+			$last = self::last_seq();
+			if ( ! MigrationKey::seq_greater( $seq, $last ) ) {
+				return false;
+			}
+			update_option( self::SEQ_OPTION, $seq, false );
+			$key = self::stored();
+			if ( null !== $key && time() - (int) $key['last_used'] >= MINUTE_IN_SECONDS ) {
+				$key['last_used'] = time();
+				update_option( self::OPTION, $key, false );
+			}
+			return true;
+		} finally {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- lock release.
+			$wpdb->query( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock ) );
 		}
 	}
 
