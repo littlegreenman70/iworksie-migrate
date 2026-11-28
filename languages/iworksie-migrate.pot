@@ -1,0 +1,950 @@
+# Copyright (C) 2026 iWorks.ie
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: iWorks.ie Migrate 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/iworksie-migrate\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-11-28T17:50:19+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: iworksie-migrate\n"
+
+#. Plugin Name of the plugin
+#: iworksie-migrate.php
+msgid "iWorks.ie Migrate"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: iworksie-migrate.php
+msgid "https://www.iworks.ie"
+msgstr ""
+
+#. Description of the plugin
+#: iworksie-migrate.php
+msgid "Copy your Media Library straight from one WordPress site to another. No archive, no third party, resumable, with a verification report."
+msgstr ""
+
+#. Author of the plugin
+#: iworksie-migrate.php
+msgid "iWorks.ie"
+msgstr ""
+
+#. translators: 1: required PHP version, 2: current PHP version
+#: iworksie-migrate.php:47
+#, php-format
+msgid "iWorks.ie Migrate requires PHP %1$s or higher. This site is running PHP %2$s."
+msgstr ""
+
+#. translators: 1: required WordPress version, 2: current WordPress version
+#: iworksie-migrate.php:60
+#, php-format
+msgid "iWorks.ie Migrate requires WordPress %1$s or higher. This site is running WordPress %2$s."
+msgstr ""
+
+#: iworksie-migrate.php:71
+msgid "iWorks.ie Migrate is missing its vendor-prefixed library. Run composer install, or install the release zip from wordpress.org."
+msgstr ""
+
+#: iworksie-migrate.php:101
+msgid "iWorks.ie Migrate could not load its shared tools library."
+msgstr ""
+
+#: iworksie-migrate.php:107
+msgid "iWorks.ie Migrate does not support multisite networks yet, so it has not loaded. It works on single WordPress sites."
+msgstr ""
+
+#: src/Admin/Ajax.php:41
+msgid "Sorry, you are not allowed to do that."
+msgstr ""
+
+#: src/Admin/Ajax.php:54
+msgid "A copy is already running. Cancel it first."
+msgstr ""
+
+#: src/Admin/Ajax.php:113
+msgid "A copy is running. Cancel it first."
+msgstr ""
+
+#: src/Admin/Screens.php:41
+msgid "Sorry, you are not allowed to access this page."
+msgstr ""
+
+#: src/Admin/Screens.php:50
+msgid "Copy from another site"
+msgstr ""
+
+#: src/Admin/Screens.php:51
+msgid "Let another site copy this one"
+msgstr ""
+
+#: src/Admin/Screens.php:52
+msgid "Report"
+msgstr ""
+
+#: src/Admin/Screens.php:75
+msgid "Expired"
+msgstr ""
+
+#. translators: %s: human time difference, e.g. "23 hours"
+#: src/Admin/Screens.php:78
+#, php-format
+msgid "Expires in %s"
+msgstr ""
+
+#: src/Admin/Screens.php:93
+msgid "Copies the Media Library files (everything in wp-content/uploads) from another WordPress site straight to this one. Nothing is zipped up first and nothing goes through a third-party server, so it works even when the other site is nearly out of disk space or has a small upload limit."
+msgstr ""
+
+#: src/Admin/Screens.php:95
+msgid "Install iWorks.ie Migrate on both sites."
+msgstr ""
+
+#: src/Admin/Screens.php:96
+msgid "On the site you are copying from, open \"Let another site copy this one\" and create a key."
+msgstr ""
+
+#: src/Admin/Screens.php:97
+msgid "Paste the key below, check the connection, then start copying. You can close the tab and resume later."
+msgstr ""
+
+#: src/Admin/Screens.php:103
+msgid "1. Connect to the other site"
+msgstr ""
+
+#. translators: %s: other site's address
+#: src/Admin/Screens.php:107
+#, php-format
+msgid "Using the key for %s."
+msgstr ""
+
+#: src/Admin/Screens.php:108
+msgid "Use a different key"
+msgstr ""
+
+#: src/Admin/Screens.php:118
+msgid "Done. To copy again (for example, to pick up new uploads), paste a fresh key."
+msgstr ""
+
+#: src/Admin/Screens.php:121
+msgid "Migration key from the other site"
+msgstr ""
+
+#: src/Admin/Screens.php:123
+#: src/Plugin.php:122
+msgid "Check connection"
+msgstr ""
+
+#: src/Admin/Screens.php:130
+msgid "2. Copy the files"
+msgstr ""
+
+#: src/Admin/Screens.php:132
+msgid "Copy options"
+msgstr ""
+
+#: src/Admin/Screens.php:133
+msgid "Skip backups, caches, logs and database dumps (recommended)"
+msgstr ""
+
+#: src/Admin/Screens.php:134
+msgid "Replace files that already exist here but are different"
+msgstr ""
+
+#: src/Admin/Screens.php:134
+msgid "Off by default, so nothing on this site is overwritten. Files that are already identical are always skipped, so running the copy again only fetches what changed."
+msgstr ""
+
+#: src/Admin/Screens.php:135
+msgid "Verify every file against the other site when finished (SHA-1)"
+msgstr ""
+
+#: src/Admin/Screens.php:143
+msgid "Start copying"
+msgstr ""
+
+#: src/Admin/Screens.php:144
+msgid "Resume"
+msgstr ""
+
+#: src/Admin/Screens.php:145
+msgid "Cancel"
+msgstr ""
+
+#: src/Admin/Screens.php:157
+#: src/Receiver/ReportBuilder.php:160
+msgid "Copied"
+msgstr ""
+
+#: src/Admin/Screens.php:158
+msgid "Size copied"
+msgstr ""
+
+#: src/Admin/Screens.php:159
+msgid "Already identical"
+msgstr ""
+
+#: src/Admin/Screens.php:160
+msgid "Kept (different here)"
+msgstr ""
+
+#: src/Admin/Screens.php:161
+#: src/Receiver/ReportBuilder.php:178
+msgid "Skipped"
+msgstr ""
+
+#: src/Admin/Screens.php:162
+#: src/Receiver/ReportBuilder.php:165
+#: src/Receiver/ReportBuilder.php:173
+msgid "Errors"
+msgstr ""
+
+#: src/Admin/Screens.php:193
+#: src/Plugin.php:135
+msgid "View full report"
+msgstr ""
+
+#: src/Admin/Screens.php:206
+msgid "Create a key to let another site copy this site's Media Library files. The other site can only read files in wp-content/uploads; it cannot change anything here, see your database or reach any other folder. Script files and server config files (.php, .htaccess and similar) are never sent."
+msgstr ""
+
+#: src/Admin/Screens.php:209
+#: src/Receiver/Preflight.php:33
+msgid "Migration key"
+msgstr ""
+
+#: src/Admin/Screens.php:214
+#: src/Plugin.php:128
+msgid "A key is active."
+msgstr ""
+
+#. translators: %s: human time difference
+#: src/Admin/Screens.php:217
+#, php-format
+msgid "Last used %s ago."
+msgstr ""
+
+#: src/Admin/Screens.php:220
+msgid "The last key has expired. Nobody can copy this site until you create a new one."
+msgstr ""
+
+#: src/Admin/Screens.php:222
+msgid "No key yet. Nobody can copy this site until you create one."
+msgstr ""
+
+#: src/Admin/Screens.php:227
+msgid "Key works for"
+msgstr ""
+
+#: src/Admin/Screens.php:229
+msgid "1 hour"
+msgstr ""
+
+#: src/Admin/Screens.php:230
+msgid "24 hours"
+msgstr ""
+
+#: src/Admin/Screens.php:231
+msgid "7 days"
+msgstr ""
+
+#: src/Admin/Screens.php:233
+#: src/Plugin.php:126
+msgid "Create key"
+msgstr ""
+
+#: src/Admin/Screens.php:233
+#: src/Plugin.php:127
+msgid "Replace key"
+msgstr ""
+
+#: src/Admin/Screens.php:234
+msgid "Revoke key"
+msgstr ""
+
+#: src/Admin/Screens.php:238
+msgid "Copy this key now and paste it into the site you are copying to. For security it is only shown once."
+msgstr ""
+
+#: src/Admin/Screens.php:254
+msgid "No copy has run on this site yet"
+msgstr ""
+
+#: src/Admin/Screens.php:255
+msgid "After a copy finishes, its full report (what was copied, skipped, kept and verified) appears here."
+msgstr ""
+
+#: src/Admin/Screens.php:263
+msgid "Download report"
+msgstr ""
+
+#: src/Plugin.php:64
+#: src/Plugin.php:79
+#: src/Plugin.php:80
+msgid "Migrate"
+msgstr ""
+
+#: src/Plugin.php:69
+msgid "Copy the Media Library straight from one site to another: no archive, no third party, resumable, verified."
+msgstr ""
+
+#: src/Plugin.php:71
+msgid "Site to site, no archive, no third party. Never overwrites files unless you ask."
+msgstr ""
+
+#: src/Plugin.php:121
+msgid "Checking…"
+msgstr ""
+
+#: src/Plugin.php:123
+msgid "Paste the key from the other site first."
+msgstr ""
+
+#: src/Plugin.php:124
+msgid "The request to this site failed. Reload the page and try again."
+msgstr ""
+
+#: src/Plugin.php:125
+msgid "Creating…"
+msgstr ""
+
+#: src/Plugin.php:129
+msgid "Key revoked. Nobody can copy this site until you create a new one."
+msgstr ""
+
+#: src/Plugin.php:130
+msgid "Revoke the key? Any copy in progress on the other site will stop."
+msgstr ""
+
+#: src/Plugin.php:131
+msgid "Cancel the copy? Files already copied stay; running it again skips them."
+msgstr ""
+
+#: src/Plugin.php:132
+msgid "Paused because the other site stopped answering. Press Resume to carry on where it left off."
+msgstr ""
+
+#: src/Plugin.php:133
+msgid "Cancelled. Files already copied stay in place."
+msgstr ""
+
+#: src/Plugin.php:134
+msgid "Starting…"
+msgstr ""
+
+#. translators: %s: technical error message
+#: src/Receiver/Client.php:149
+#, php-format
+msgid "This site could not reach the other site (%s)."
+msgstr ""
+
+#: src/Receiver/Client.php:150
+msgid "Check the other site is online and that this server can make outgoing HTTPS requests. If the other site is a local development site with a self-signed certificate, see the FAQ about the iwiemg_sslverify filter."
+msgstr ""
+
+#. translators: %s: redirect target URL
+#: src/Receiver/Client.php:155
+#, php-format
+msgid "The other site redirected the request to %s."
+msgstr ""
+
+#. translators: %s: redirect target URL
+#: src/Receiver/Client.php:155
+msgid "another address"
+msgstr ""
+
+#: src/Receiver/Client.php:156
+msgid "This usually means its WordPress Address setting does not match the address it is really served from (for example http vs https, or www vs no www). Fix the address in Settings > General on the other site, then create a new key."
+msgstr ""
+
+#: src/Receiver/Client.php:160
+msgid "The other site answered, but iWorks.ie Migrate is not active there, or its REST API is blocked."
+msgstr ""
+
+#: src/Receiver/Client.php:161
+msgid "Install and activate iWorks.ie Migrate on the other site. If it is already active, check for a security plugin that disables the WordPress REST API for visitors and allow the iworksie-migrate route."
+msgstr ""
+
+#: src/Receiver/Client.php:166
+msgid "The other site no longer accepts this key. It has expired, been revoked or been replaced by a newer key."
+msgstr ""
+
+#: src/Receiver/Client.php:167
+msgid "On the other site go to iWorks Tools > Migrate > Let another site copy this one, create a new key and paste it here."
+msgstr ""
+
+#: src/Receiver/Client.php:171
+msgid "The other site rejected the key's signature. The key may have been copied incompletely."
+msgstr ""
+
+#: src/Receiver/Client.php:172
+msgid "Copy the whole key again with the Copy button on the other site and paste it here."
+msgstr ""
+
+#: src/Receiver/Client.php:176
+msgid "The clocks on the two servers are more than 15 minutes apart, so requests are refused for safety."
+msgstr ""
+
+#: src/Receiver/Client.php:177
+msgid "Ask your host to correct the server time (NTP) on whichever server is wrong."
+msgstr ""
+
+#: src/Receiver/Client.php:181
+msgid "The other site sent back something that was not a valid answer."
+msgstr ""
+
+#: src/Receiver/Client.php:182
+msgid "A firewall, CDN challenge page, maintenance mode or security plugin on the other site may be intercepting requests. Allow requests to /wp-json/iworksie-migrate/ and try again."
+msgstr ""
+
+#. translators: 1: error code, 2: error message
+#: src/Receiver/Client.php:187
+#, php-format
+msgid "The other site returned an error: %1$s %2$s"
+msgstr ""
+
+#: src/Receiver/Client.php:188
+msgid "Try again in a few minutes. If it keeps happening, run iWorks.ie Health Check on both sites."
+msgstr ""
+
+#: src/Receiver/Preflight.php:34
+msgid "That does not look like an iWorks.ie Migrate key."
+msgstr ""
+
+#: src/Receiver/Preflight.php:36
+msgid "On the site you are copying from, go to iWorks Tools > Migrate > Let another site copy this one, create a key, press Copy and paste it here. Keys start with \"iwiemg1.\""
+msgstr ""
+
+#: src/Receiver/Preflight.php:53
+#: src/Receiver/Preflight.php:60
+msgid "Connection to the other site"
+msgstr ""
+
+#. translators: 1: site name, 2: site address
+#: src/Receiver/Preflight.php:63
+#, php-format
+msgid "Connected to %1$s (%2$s) and the key was accepted."
+msgstr ""
+
+#: src/Receiver/Preflight.php:71
+msgid "Plugin versions"
+msgstr ""
+
+#: src/Receiver/Preflight.php:72
+msgid "The two sites run versions of iWorks.ie Migrate that cannot talk to each other."
+msgstr ""
+
+#: src/Receiver/Preflight.php:73
+msgid "Update iWorks.ie Migrate on both sites to the latest version."
+msgstr ""
+
+#: src/Receiver/Preflight.php:80
+msgid "Same site"
+msgstr ""
+
+#: src/Receiver/Preflight.php:81
+msgid "This key belongs to this same site. Copying a site onto itself would do nothing useful."
+msgstr ""
+
+#: src/Receiver/Preflight.php:82
+msgid "Create the key on the site you want to copy from, and paste it into the site you want to copy to."
+msgstr ""
+
+#: src/Receiver/Preflight.php:88
+msgid "Uploads folder on the other site"
+msgstr ""
+
+#: src/Receiver/Preflight.php:89
+msgid "The other site cannot read its own uploads folder."
+msgstr ""
+
+#: src/Receiver/Preflight.php:90
+msgid "Ask the other site's host to check the permissions of wp-content/uploads."
+msgstr ""
+
+#: src/Receiver/Preflight.php:96
+msgid "Encryption"
+msgstr ""
+
+#: src/Receiver/Preflight.php:97
+msgid "The other site uses http, not https, so files travel unencrypted."
+msgstr ""
+
+#: src/Receiver/Preflight.php:99
+msgid "Anyone on the network path could read the files as they are copied. The key itself is never sent, so they cannot reuse it."
+msgstr ""
+
+#: src/Receiver/Preflight.php:100
+msgid "Fine for a local or private network. For public sites, enable HTTPS on the other site and create a new key."
+msgstr ""
+
+#: src/Receiver/Preflight.php:107
+msgid "Private network address"
+msgstr ""
+
+#: src/Receiver/Preflight.php:108
+msgid "The key points at a private, loopback or local address. This site will contact that address directly."
+msgstr ""
+
+#: src/Receiver/Preflight.php:110
+msgid "That is normal for LAN and local development migrations, but a mistaken or malicious key can make this server request an internal host."
+msgstr ""
+
+#: src/Receiver/Preflight.php:111
+msgid "Only continue if you trust the key and expected a local or private target. For public sites, paste a key whose REST URL uses a public hostname."
+msgstr ""
+
+#: src/Receiver/Preflight.php:119
+msgid "64-bit PHP"
+msgstr ""
+
+#: src/Receiver/Preflight.php:120
+msgid "At least one of the two sites runs 32-bit PHP. Files larger than about 2 GB cannot be listed or copied reliably on that build."
+msgstr ""
+
+#: src/Receiver/Preflight.php:122
+msgid "On 32-bit PHP, file sizes and byte offsets wrap above 2 GB, so a large Media Library can fail or loop."
+msgstr ""
+
+#: src/Receiver/Preflight.php:123
+msgid "Use 64-bit PHP on both sites for libraries that may contain files over 2 GB. Smaller libraries can still copy on 32-bit PHP."
+msgstr ""
+
+#: src/Receiver/Preflight.php:132
+#: src/Receiver/Preflight.php:141
+msgid "File name Unicode forms"
+msgstr ""
+
+#: src/Receiver/Preflight.php:133
+msgid "The PHP intl extension is missing on at least one site, so Unicode file name forms cannot be detected."
+msgstr ""
+
+#: src/Receiver/Preflight.php:135
+msgid "A macOS site often stores NFD file names while a Linux site stores NFC. The same visible name can then look like two different files."
+msgstr ""
+
+#: src/Receiver/Preflight.php:136
+msgid "Install the intl extension where possible. This version does not rewrite names; it copies and compares them as raw bytes."
+msgstr ""
+
+#: src/Receiver/Preflight.php:142
+msgid "File names are copied as raw bytes. This version detects non-NFC names but does not rewrite them."
+msgstr ""
+
+#: src/Receiver/Preflight.php:144
+msgid "A macOS giver (NFD) and a Linux receiver (NFC) can keep lookalike duplicates or fail a later verify if tools normalize names differently."
+msgstr ""
+
+#: src/Receiver/Preflight.php:145
+msgid "Prefer matching Unicode forms on both filesystems when you can. No action is required for ASCII-only Media Libraries."
+msgstr ""
+
+#: src/Receiver/Preflight.php:158
+#: src/Receiver/Preflight.php:170
+msgid "Uploads folder on this site"
+msgstr ""
+
+#: src/Receiver/Preflight.php:159
+msgid "This site's uploads folder is missing or not writable."
+msgstr ""
+
+#. translators: %s: uploads path relative to the site root
+#: src/Receiver/Preflight.php:163
+#, php-format
+msgid "Ask your host to make %s writable by the web server."
+msgstr ""
+
+#: src/Receiver/Preflight.php:171
+msgid "This site's uploads folder is writable."
+msgstr ""
+
+#: src/Receiver/Preflight.php:175
+msgid "Disk space on this site"
+msgstr ""
+
+#: src/Receiver/Preflight.php:177
+msgid "This server does not report free disk space. The copy will stop cleanly if the disk fills up."
+msgstr ""
+
+#. translators: %s: free space
+#: src/Receiver/Preflight.php:179
+#, php-format
+msgid "%s free. The exact space needed is checked after the files are listed, before anything is copied."
+msgstr ""
+
+#: src/Receiver/PullJob.php:152
+msgid "Listing files on the other site…"
+msgstr ""
+
+#: src/Receiver/PullJob.php:158
+msgid "No migration key has been checked yet."
+msgstr ""
+
+#: src/Receiver/PullJob.php:158
+msgid "Paste the key from the other site and press Check connection first."
+msgstr ""
+
+#: src/Receiver/PullJob.php:162
+msgid "This site's uploads folder could not be found."
+msgstr ""
+
+#: src/Receiver/PullJob.php:162
+msgid "Check the uploads path in Settings > Media, or ask your host why wp-content/uploads is missing."
+msgstr ""
+
+#: src/Receiver/PullJob.php:176
+msgid "The migration key was removed while copying."
+msgstr ""
+
+#: src/Receiver/PullJob.php:176
+msgid "Paste the key again and start a new copy. Files already copied will be skipped."
+msgstr ""
+
+#: src/Receiver/PullJob.php:345
+msgid "an unnamed file"
+msgstr ""
+
+#. translators: %s: largest file path or size label
+#: src/Receiver/PullJob.php:350
+#, php-format
+msgid "This server runs 32-bit PHP, which can't handle files over 2 GB (largest: %s). Ask your host for 64-bit PHP."
+msgstr ""
+
+#: src/Receiver/PullJob.php:353
+msgid "Ask your host for 64-bit PHP on this site (and on the other site if it is also 32-bit), then start again."
+msgstr ""
+
+#. translators: 1: bytes needed, 2: bytes free
+#: src/Receiver/PullJob.php:368
+#, php-format
+msgid "Not enough disk space on this site: the copy needs %1$s but only %2$s is free."
+msgstr ""
+
+#: src/Receiver/PullJob.php:372
+msgid "Free up space or ask your host for more, then start again. Leave \"Skip backups, caches and logs\" ticked to avoid copying dead weight."
+msgstr ""
+
+#: src/Receiver/PullJob.php:469
+msgid "Refused: unsafe file name or type."
+msgstr ""
+
+#: src/Receiver/PullJob.php:492
+msgid "Could not create the folder on this site."
+msgstr ""
+
+#: src/Receiver/PullJob.php:496
+msgid "Refused: the folder on this site points outside the uploads folder."
+msgstr ""
+
+#: src/Receiver/PullJob.php:509
+#: src/Receiver/PullJob.php:580
+#: src/Receiver/PullJob.php:678
+msgid "Could not write the file on this site."
+msgstr ""
+
+#: src/Receiver/PullJob.php:564
+msgid "That file no longer exists on the other site."
+msgstr ""
+
+#: src/Receiver/PullJob.php:656
+msgid "A chunk arrived damaged; retrying."
+msgstr ""
+
+#: src/Receiver/PullJob.php:661
+msgid "The file changed on the other site while it was being copied. Run the copy again to pick up the new version."
+msgstr ""
+
+#: src/Receiver/PullJob.php:676
+msgid "This site ran out of disk space while copying."
+msgstr ""
+
+#: src/Receiver/PullJob.php:676
+msgid "Free up space, then start again. Files already copied will be skipped."
+msgstr ""
+
+#: src/Receiver/PullJob.php:702
+msgid "The copied file was the wrong size and was discarded."
+msgstr ""
+
+#: src/Receiver/PullJob.php:712
+#: src/Receiver/PullJob.php:719
+#: src/Receiver/PullJob.php:726
+msgid "Could not move the copied file into place."
+msgstr ""
+
+#: src/Receiver/PullJob.php:1115
+msgid "Paused: the other site stopped answering."
+msgstr ""
+
+#. translators: 1: attempt number, 2: max attempts
+#: src/Receiver/PullJob.php:1119
+#, php-format
+msgid "Connection problem, retrying (%1$d of %2$d)…"
+msgstr ""
+
+#: src/Receiver/PullJob.php:1122
+msgid "Finished."
+msgstr ""
+
+#. translators: 1: number of files, 2: size
+#: src/Receiver/PullJob.php:1129
+#, php-format
+msgid "Listing files on the other site… %1$s file, %2$s so far"
+msgid_plural "Listing files on the other site… %1$s files, %2$s so far"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: bytes processed, 2: total bytes, 3: current file
+#: src/Receiver/PullJob.php:1141
+#, php-format
+msgid "Copying… %1$s of %2$s%3$s"
+msgstr ""
+
+#. translators: %d: files verified
+#: src/Receiver/PullJob.php:1148
+#, php-format
+msgid "Verifying copied files… %d checked"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:41
+msgid "The copy stopped before it finished."
+msgstr ""
+
+#. translators: 1: number of files, 2: total size
+#: src/Receiver/ReportBuilder.php:47
+#, php-format
+msgid "Copied %1$s file (%2$s)."
+msgid_plural "Copied %1$s files (%2$s)."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: number of files
+#: src/Receiver/ReportBuilder.php:53
+#, php-format
+msgid "%s file was already identical and was skipped."
+msgid_plural "%s files were already identical and were skipped."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: number of files
+#: src/Receiver/ReportBuilder.php:63
+#, php-format
+msgid "%s file was verified against the other site."
+msgid_plural "All %s files were verified against the other site."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: number of files
+#: src/Receiver/ReportBuilder.php:68
+#, php-format
+msgid "%s file did not match the other site after copying."
+msgid_plural "%s files did not match the other site after copying."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Receiver/ReportBuilder.php:83
+msgid "script file (never copied, for safety)"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:84
+msgid "server config file such as .htaccess (never copied, for safety)"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:85
+msgid "unfinished download"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:86
+msgid "symbolic link"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:87
+msgid "hard link (never copied, for safety)"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:88
+msgid "not a regular file (skipped for safety)"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:89
+msgid "larger than this PHP build can address (needs 64-bit PHP for files over about 2 GB)"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:90
+msgid "unreadable on the other site"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:91
+msgid "unsupported file name"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:92
+msgid "backup"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:93
+msgid "cache"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:94
+msgid "development folder"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:95
+msgid "log file"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:96
+msgid "database dump or archive"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:117
+msgid "iWorks.ie Migrate report"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:119
+msgid "From:"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:120
+msgid "To:"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:122
+msgid "Started:"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:125
+msgid "Finished:"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:127
+msgid "Options:"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:128
+msgid "replace different files"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:128
+msgid "keep different files already here"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:129
+msgid "skip backups/caches/logs"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:129
+msgid "include backups/caches/logs"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:130
+msgid "verify"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:130
+msgid "no verification"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:132
+msgid "Result"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:137
+msgid "Stopped:"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:139
+msgid "What to do:"
+msgstr ""
+
+#. translators: %s: number of file names
+#: src/Receiver/ReportBuilder.php:147
+#, php-format
+msgid "%s file name uses a different Unicode form (common when files were uploaded from a Mac). It was copied with its exact name."
+msgid_plural "%s file names use a different Unicode form (common when files were uploaded from a Mac). They were copied with their exact names."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Receiver/ReportBuilder.php:157
+msgid "Files"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:159
+msgid "On the other site (after skips)"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:161
+msgid "Of which replaced a different file"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:162
+msgid "Already identical, skipped"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:163
+msgid "Different file already here, kept"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:164
+msgid "Skipped (safety / dead weight)"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:167
+msgid "Verified (SHA-1 match)"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:168
+msgid "Did not match"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:169
+msgid "Missing after copy"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:174
+msgid "Did not match after copying"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:175
+msgid "Missing after copying"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:176
+msgid "Different file already on this site (kept; tick \"Replace\" and run again to overwrite)"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:177
+msgid "Replaced"
+msgstr ""
+
+#. translators: %s: number of further items
+#: src/Receiver/ReportBuilder.php:208
+#, php-format
+msgid "…and %s more"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:213
+msgid "Next steps"
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:215
+msgid "This copies files only. Media Library entries live in the database: move the database first (or afterwards) with your usual tool."
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:216
+msgid "If the site address changed, update old URLs in the database, for example with the free iWorks.ie Search & Replace plugin (\"Change domain\")."
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:217
+msgid "Delete or let expire the migration key on the other site when you are done."
+msgstr ""
+
+#: src/Receiver/ReportBuilder.php:219
+msgid "Generated by iWorks.ie Migrate. Need a custom plugin? iWorks builds them: https://www.iworks.ie"
+msgstr ""
