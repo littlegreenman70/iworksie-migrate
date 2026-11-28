@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-27T13:34:23+00:00\n"
+"POT-Creation-Date: 2026-11-28T17:50:19+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: iworksie-migrate\n"
@@ -177,7 +177,7 @@ msgid "Cancel"
 msgstr ""
 
 #: src/Admin/Screens.php:157
-#: src/Receiver/ReportBuilder.php:143
+#: src/Receiver/ReportBuilder.php:160
 msgid "Copied"
 msgstr ""
 
@@ -194,13 +194,13 @@ msgid "Kept (different here)"
 msgstr ""
 
 #: src/Admin/Screens.php:161
-#: src/Receiver/ReportBuilder.php:161
+#: src/Receiver/ReportBuilder.php:178
 msgid "Skipped"
 msgstr ""
 
 #: src/Admin/Screens.php:162
-#: src/Receiver/ReportBuilder.php:148
-#: src/Receiver/ReportBuilder.php:156
+#: src/Receiver/ReportBuilder.php:165
+#: src/Receiver/ReportBuilder.php:173
 msgid "Errors"
 msgstr ""
 
@@ -692,19 +692,21 @@ msgid "Finished."
 msgstr ""
 
 #. translators: 1: number of files, 2: size
-#: src/Receiver/PullJob.php:1127
+#: src/Receiver/PullJob.php:1129
 #, php-format
-msgid "Listing files on the other site… %1$s files, %2$s so far"
-msgstr ""
+msgid "Listing files on the other site… %1$s file, %2$s so far"
+msgid_plural "Listing files on the other site… %1$s files, %2$s so far"
+msgstr[0] ""
+msgstr[1] ""
 
 #. translators: 1: bytes processed, 2: total bytes, 3: current file
-#: src/Receiver/PullJob.php:1131
+#: src/Receiver/PullJob.php:1141
 #, php-format
 msgid "Copying… %1$s of %2$s%3$s"
 msgstr ""
 
 #. translators: %d: files verified
-#: src/Receiver/PullJob.php:1138
+#: src/Receiver/PullJob.php:1148
 #, php-format
 msgid "Verifying copied files… %d checked"
 msgstr ""
@@ -713,220 +715,236 @@ msgstr ""
 msgid "The copy stopped before it finished."
 msgstr ""
 
-#. translators: 1: files copied, 2: size copied, 3: files already identical
+#. translators: 1: number of files, 2: total size
 #: src/Receiver/ReportBuilder.php:47
 #, php-format
-msgid "Copied %1$s files (%2$s). %3$s files were already identical and were skipped."
-msgstr ""
+msgid "Copied %1$s file (%2$s)."
+msgid_plural "Copied %1$s files (%2$s)."
+msgstr[0] ""
+msgstr[1] ""
 
 #. translators: %s: number of files
-#: src/Receiver/ReportBuilder.php:56
+#: src/Receiver/ReportBuilder.php:53
 #, php-format
-msgid "All %s files were verified against the other site."
-msgstr ""
+msgid "%s file was already identical and was skipped."
+msgid_plural "%s files were already identical and were skipped."
+msgstr[0] ""
+msgstr[1] ""
 
 #. translators: %s: number of files
-#: src/Receiver/ReportBuilder.php:58
+#: src/Receiver/ReportBuilder.php:63
 #, php-format
-msgid "%s files did not match the other site after copying."
-msgstr ""
+msgid "%s file was verified against the other site."
+msgid_plural "All %s files were verified against the other site."
+msgstr[0] ""
+msgstr[1] ""
 
-#: src/Receiver/ReportBuilder.php:71
+#. translators: %s: number of files
+#: src/Receiver/ReportBuilder.php:68
+#, php-format
+msgid "%s file did not match the other site after copying."
+msgid_plural "%s files did not match the other site after copying."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Receiver/ReportBuilder.php:83
 msgid "script file (never copied, for safety)"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:72
+#: src/Receiver/ReportBuilder.php:84
 msgid "server config file such as .htaccess (never copied, for safety)"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:73
+#: src/Receiver/ReportBuilder.php:85
 msgid "unfinished download"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:74
+#: src/Receiver/ReportBuilder.php:86
 msgid "symbolic link"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:75
+#: src/Receiver/ReportBuilder.php:87
 msgid "hard link (never copied, for safety)"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:76
+#: src/Receiver/ReportBuilder.php:88
 msgid "not a regular file (skipped for safety)"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:77
+#: src/Receiver/ReportBuilder.php:89
 msgid "larger than this PHP build can address (needs 64-bit PHP for files over about 2 GB)"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:78
+#: src/Receiver/ReportBuilder.php:90
 msgid "unreadable on the other site"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:79
+#: src/Receiver/ReportBuilder.php:91
 msgid "unsupported file name"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:80
+#: src/Receiver/ReportBuilder.php:92
 msgid "backup"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:81
+#: src/Receiver/ReportBuilder.php:93
 msgid "cache"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:82
+#: src/Receiver/ReportBuilder.php:94
 msgid "development folder"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:83
+#: src/Receiver/ReportBuilder.php:95
 msgid "log file"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:84
+#: src/Receiver/ReportBuilder.php:96
 msgid "database dump or archive"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:105
+#: src/Receiver/ReportBuilder.php:117
 msgid "iWorks.ie Migrate report"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:107
+#: src/Receiver/ReportBuilder.php:119
 msgid "From:"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:108
+#: src/Receiver/ReportBuilder.php:120
 msgid "To:"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:110
+#: src/Receiver/ReportBuilder.php:122
 msgid "Started:"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:113
+#: src/Receiver/ReportBuilder.php:125
 msgid "Finished:"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:115
+#: src/Receiver/ReportBuilder.php:127
 msgid "Options:"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:116
+#: src/Receiver/ReportBuilder.php:128
 msgid "replace different files"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:116
+#: src/Receiver/ReportBuilder.php:128
 msgid "keep different files already here"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:117
+#: src/Receiver/ReportBuilder.php:129
 msgid "skip backups/caches/logs"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:117
+#: src/Receiver/ReportBuilder.php:129
 msgid "include backups/caches/logs"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:118
+#: src/Receiver/ReportBuilder.php:130
 msgid "verify"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:118
+#: src/Receiver/ReportBuilder.php:130
 msgid "no verification"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:120
+#: src/Receiver/ReportBuilder.php:132
 msgid "Result"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:125
+#: src/Receiver/ReportBuilder.php:137
 msgid "Stopped:"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:127
+#: src/Receiver/ReportBuilder.php:139
 msgid "What to do:"
 msgstr ""
 
 #. translators: %s: number of file names
-#: src/Receiver/ReportBuilder.php:135
+#: src/Receiver/ReportBuilder.php:147
 #, php-format
-msgid "%s file names use a different Unicode form (common when files were uploaded from a Mac). They were copied with their exact names."
-msgstr ""
+msgid "%s file name uses a different Unicode form (common when files were uploaded from a Mac). It was copied with its exact name."
+msgid_plural "%s file names use a different Unicode form (common when files were uploaded from a Mac). They were copied with their exact names."
+msgstr[0] ""
+msgstr[1] ""
 
-#: src/Receiver/ReportBuilder.php:140
+#: src/Receiver/ReportBuilder.php:157
 msgid "Files"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:142
+#: src/Receiver/ReportBuilder.php:159
 msgid "On the other site (after skips)"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:144
+#: src/Receiver/ReportBuilder.php:161
 msgid "Of which replaced a different file"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:145
+#: src/Receiver/ReportBuilder.php:162
 msgid "Already identical, skipped"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:146
+#: src/Receiver/ReportBuilder.php:163
 msgid "Different file already here, kept"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:147
+#: src/Receiver/ReportBuilder.php:164
 msgid "Skipped (safety / dead weight)"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:150
+#: src/Receiver/ReportBuilder.php:167
 msgid "Verified (SHA-1 match)"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:151
+#: src/Receiver/ReportBuilder.php:168
 msgid "Did not match"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:152
+#: src/Receiver/ReportBuilder.php:169
 msgid "Missing after copy"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:157
+#: src/Receiver/ReportBuilder.php:174
 msgid "Did not match after copying"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:158
+#: src/Receiver/ReportBuilder.php:175
 msgid "Missing after copying"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:159
+#: src/Receiver/ReportBuilder.php:176
 msgid "Different file already on this site (kept; tick \"Replace\" and run again to overwrite)"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:160
+#: src/Receiver/ReportBuilder.php:177
 msgid "Replaced"
 msgstr ""
 
 #. translators: %s: number of further items
-#: src/Receiver/ReportBuilder.php:191
+#: src/Receiver/ReportBuilder.php:208
 #, php-format
 msgid "…and %s more"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:196
+#: src/Receiver/ReportBuilder.php:213
 msgid "Next steps"
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:198
+#: src/Receiver/ReportBuilder.php:215
 msgid "This copies files only. Media Library entries live in the database: move the database first (or afterwards) with your usual tool."
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:199
+#: src/Receiver/ReportBuilder.php:216
 msgid "If the site address changed, update old URLs in the database, for example with the free iWorks.ie Search & Replace plugin (\"Change domain\")."
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:200
+#: src/Receiver/ReportBuilder.php:217
 msgid "Delete or let expire the migration key on the other site when you are done."
 msgstr ""
 
-#: src/Receiver/ReportBuilder.php:202
+#: src/Receiver/ReportBuilder.php:219
 msgid "Generated by iWorks.ie Migrate. Need a custom plugin? iWorks builds them: https://www.iworks.ie"
 msgstr ""

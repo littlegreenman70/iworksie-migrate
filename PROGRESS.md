@@ -38,3 +38,8 @@ Integration tests (`tests/Integration/PullFlowTest.php`) run the real REST endpo
 ## CI fixes (2026-11-27)
 
 - [x] install-wp-tests.sh tag matching (parity with other plugins; CI still uses latest)
+
+## 2026-11-28 final 1.0.0 pass
+- Plural forms (`_n`) for NFC note, copy/verify headlines and listing progress. Unit test for count-of-1 NFC note.
+- Lint/analyse/unit/integration/build/Plugin Check re-run; zip refreshed in ~/Downloads.
+

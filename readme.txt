@@ -116,6 +116,7 @@ Yes. No paid version, no upsells, no data sent anywhere except between your own 
 == Changelog ==
 
 = 1.0.0 =
+* Fix count-aware plural strings in the verify report and progress messages.
 * Initial release: site-to-site copy of the uploads folder with pairing key, pre-flight checks on both sites, disk space check, resumable chunked transfer, SHA-1 verification report and WP-CLI commands.
 * Refuse hardlinks on the giving site (symlinks were already refused); optional `iwiemg_allow_hardlinks` filter; list non-regular files as skipped.
 * Atomic sequence-number claim to close a replay race under concurrent requests.

@@ -59,3 +59,11 @@ Choices made while building v1.0.0 overnight without Cormac's input (he asked fo
 
 - Real screenshots (Playwright, like Health Check) and final banner/icon artwork (none yet in `.wordpress-org/`).
 - A real two-site test on Cormac's machines (e.g. live iworks.ie → www.iworks.new), see PROGRESS.md.
+
+### 2026-11-28 plurals / final pass
+- Plural forms (`_n`) for NFC note, copy/verify headlines and listing progress. Unit test for count-of-1 NFC note.
+
+### 2026-11-28 final 1.0.0 suite pass
+- Static collision check across Health Check + six 1.0.0 plugins: no shared plugin-owned globals (constants, options, AJAX, REST, handles, tables). Core `iworks_tools_*` hooks remain the only intentional shared names.
+- Live check on www.iworks.new with all seven active: every admin tab HTTP 200; `iwt-core.css`/`iwt-core.js` once per page; no iworksie PHP in debug.log; screenshots under `~/Downloads/iworks-repos/screens/final/`.
+

@@ -1123,8 +1123,18 @@ final class PullJob implements Job {
 		}
 		switch ( $state['phase'] ) {
 			case 'count':
-				/* translators: 1: number of files, 2: size */
-				return sprintf( __( 'Listing files on the other site… %1$s files, %2$s so far', 'iworksie-migrate' ), number_format_i18n( (int) $state['t']['files'] ), size_format( (int) $state['t']['bytes'] ) );
+				$file_count = (int) $state['t']['files'];
+				return sprintf(
+					/* translators: 1: number of files, 2: size */
+					_n(
+						'Listing files on the other site… %1$s file, %2$s so far',
+						'Listing files on the other site… %1$s files, %2$s so far',
+						$file_count,
+						'iworksie-migrate'
+					),
+					number_format_i18n( $file_count ),
+					size_format( (int) $state['t']['bytes'] )
+				);
 			case 'copy':
 				return sprintf(
 					/* translators: 1: bytes processed, 2: total bytes, 3: current file */

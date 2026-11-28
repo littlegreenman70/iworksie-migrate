@@ -40,22 +40,34 @@ final class ReportBuilder {
 		if ( '' !== (string) ( isset( $summary['failed'] ) ? $summary['failed'] : '' ) ) {
 			return __( 'The copy stopped before it finished.', 'iworksie-migrate' );
 		}
-		$copied = (int) ( isset( $c['copied'] ) ? $c['copied'] : 0 );
-		$same   = (int) ( isset( $c['same'] ) ? $c['same'] : 0 );
-		$text   = sprintf(
-			/* translators: 1: files copied, 2: size copied, 3: files already identical */
-			__( 'Copied %1$s files (%2$s). %3$s files were already identical and were skipped.', 'iworksie-migrate' ),
+		$copied        = (int) ( isset( $c['copied'] ) ? $c['copied'] : 0 );
+		$same          = (int) ( isset( $c['same'] ) ? $c['same'] : 0 );
+		$copied_phrase = sprintf(
+			/* translators: 1: number of files, 2: total size */
+			_n( 'Copied %1$s file (%2$s).', 'Copied %1$s files (%2$s).', $copied, 'iworksie-migrate' ),
 			number_format_i18n( $copied ),
-			size_format( (int) ( isset( $c['copied_bytes'] ) ? $c['copied_bytes'] : 0 ), 1 ),
+			size_format( (int) ( isset( $c['copied_bytes'] ) ? $c['copied_bytes'] : 0 ), 1 )
+		);
+		$same_phrase = sprintf(
+			/* translators: %s: number of files */
+			_n( '%s file was already identical and was skipped.', '%s files were already identical and were skipped.', $same, 'iworksie-migrate' ),
 			number_format_i18n( $same )
 		);
+		$text = $copied_phrase . ' ' . $same_phrase;
 		if ( ! empty( $summary['opts']['verify'] ) ) {
+			$verified = (int) ( isset( $c['verified'] ) ? $c['verified'] : 0 );
 			$problems = (int) ( isset( $c['mismatched'] ) ? $c['mismatched'] : 0 ) + (int) ( isset( $c['missing'] ) ? $c['missing'] : 0 );
 			$text    .= ' ' . ( 0 === $problems
-				/* translators: %s: number of files */
-				? sprintf( __( 'All %s files were verified against the other site.', 'iworksie-migrate' ), number_format_i18n( (int) ( isset( $c['verified'] ) ? $c['verified'] : 0 ) ) )
-				/* translators: %s: number of files */
-				: sprintf( __( '%s files did not match the other site after copying.', 'iworksie-migrate' ), number_format_i18n( $problems ) ) );
+				? sprintf(
+					/* translators: %s: number of files */
+					_n( '%s file was verified against the other site.', 'All %s files were verified against the other site.', $verified, 'iworksie-migrate' ),
+					number_format_i18n( $verified )
+				)
+				: sprintf(
+					/* translators: %s: number of files */
+					_n( '%s file did not match the other site after copying.', '%s files did not match the other site after copying.', $problems, 'iworksie-migrate' ),
+					number_format_i18n( $problems )
+				) );
 		}
 		return $text;
 	}
@@ -132,7 +144,12 @@ final class ReportBuilder {
 			$lines[] = '';
 			$lines[] = sprintf(
 				/* translators: %s: number of file names */
-				__( '%s file names use a different Unicode form (common when files were uploaded from a Mac). They were copied with their exact names.', 'iworksie-migrate' ),
+				_n(
+					'%s file name uses a different Unicode form (common when files were uploaded from a Mac). It was copied with its exact name.',
+					'%s file names use a different Unicode form (common when files were uploaded from a Mac). They were copied with their exact names.',
+					$nfc,
+					'iworksie-migrate'
+				),
 				number_format_i18n( $nfc )
 			);
 		}
